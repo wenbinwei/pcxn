@@ -16,6 +16,7 @@
 				//$(".result").show();
 				$(".result").hide();
 				$(".display").hide();
+				$(".waitmessage").hide();
 			});
 			var pCutOffValue = 0.05;
 			var topNValue = 0;
@@ -99,7 +100,7 @@
 					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
 				}
 				
-				canvas1.width = window.innerWidth*2/3-45;
+				canvas1.width = window.innerWidth*2/3-50;
 				canvas1.height = canvas1.width;
 				var cnv4=document.getElementById('canvas1');
 				var ctx4=cnv4.getContext('2d');
@@ -238,7 +239,7 @@
 				t.rows.add( tableData );
 				t.draw();
 				
-				canvas2.width = window.innerWidth*2/3-45;
+				canvas2.width = window.innerWidth*2/3-50;
 				canvas2.height = canvas2.width;
 				var cx2 = new CanvasXpress(
 					"canvas2",
@@ -342,7 +343,7 @@
 					corrCutOffValue = newCorrCutOffValue;
 					geneSetCollectionValue = newGeneSetCollectionValue;
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("serviceV2.jsp", parms).done(handleForm1Response);
+					$.getJSON("getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
@@ -350,12 +351,16 @@
 			};
 			
 			function updateTable2() {
+				$('#table2').hide();
+				$("#table2waiting").show();
 				var geneSetNameValue = document.getElementById("selctedLeafName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
 				$.getJSON("getGeneSetMembers.jsp", parms).done(handleTable2Response);
 			}
 			
 			function updateTable3() {
+				$('#table3').hide();
+				$("#table3waiting").show();
 				var geneSetNameValue = document.getElementById("selctedNodeName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
 				$.getJSON("getGeneSetMembers.jsp", parms).done(handleTable3Response);
@@ -365,12 +370,14 @@
 				var tableData = response;
 				var tableid = '#table2';
 				updateGeneSetTable(tableid, tableData);
+				$("#table2waiting").hide();
 			}
 			
 			function handleTable3Response(response) {
 				var tableData = response;
 				var tableid = '#table3';
 				updateGeneSetTable(tableid, tableData);
+				$("#table3waiting").hide();
 			}
 			
 			function updateGeneSetTable(tableid, tableData) {
@@ -397,6 +404,17 @@
 				t.draw();
 			 	$(tableid).show();
 			}
+			
+			function doSomething() {
+				//alert("I'm done resizing for the moment");
+				handleForm1Response(form1Response);
+			};
+			
+			var resizeTimer;
+			$(window).resize(function() {
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(doSomething, 100);
+			});
 		</script>
 	</head>
 	<body>
@@ -473,7 +491,8 @@
 									<th>Description</th>
 								</tr>
 							</tfoot>
-						</table>						
+						</table>
+						<p id="table2waiting" class="waitmessage">Please wait. Getting data ....</p>
 					</div>
 				</div>
 			</div>
@@ -507,6 +526,7 @@
 								</tr>
 							</tfoot>
 						</table>
+						<p id="table3waiting" class="waitmessage">Please wait. Getting data ....</p>
 					</div>
 				</div>
 			</div>
