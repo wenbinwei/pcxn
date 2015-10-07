@@ -9,7 +9,7 @@
 		<link href="/shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />		
 		<link rel="stylesheet" type="text/css" href="/TableTools/css/dataTables.tableTools.css">
 		<script type="text/javascript" language="javascript" src="/TableTools/js/dataTables.tableTools.js"></script>
-		<link rel="stylesheet" type="text/css" href="/css/pcxn_v3.css">
+		<link rel="stylesheet" type="text/css" href="/pcxn/pcxn.css">
 
 		<script type="text/javascript">
 			$(document).ready(function(){
@@ -279,9 +279,9 @@
 				var ctx = cnv.getContext('2d');
 				var pict = new Image();				
 				if( topNValue > 0) {
-					pict.src = "/img/pcxn-legend3.png";
+					pict.src = "/pcxn/pcxn-legend1.png";
 				} else {
-					pict.src = "/img/pcxn-legend2.png";
+					pict.src = "/pcxn/pcxn-legend2.png";
 				}
 				pict.onload = function (){
 					ctx.clearRect(0, 0, canvas3.width, canvas3.height);
