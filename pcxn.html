@@ -121,8 +121,8 @@
 							"graphType": "Heatmap",
 							"linkage" : clusterMethod,
 							"varLabelRotate": 0,
-							"maxSmpStringLen" : 150,
-							"maxVarStringLen": 150,
+							"maxSmpStringLen" : 20,
+							"maxVarStringLen": 20,
 							"autoScaleFont" : false,
 							"varLabelFontSize" : 14,
 							"smpLabelFontSize" : 14,
@@ -343,7 +343,7 @@
 					corrCutOffValue = newCorrCutOffValue;
 					geneSetCollectionValue = newGeneSetCollectionValue;
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("getPartialCorrelation.jsp", parms).done(handleForm1Response);
+					$.getJSON("/pcxn/getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
@@ -355,7 +355,7 @@
 				$("#table2waiting").show();
 				var geneSetNameValue = document.getElementById("selctedLeafName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
-				$.getJSON("getGeneSetMembers.jsp", parms).done(handleTable2Response);
+				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable2Response);
 			}
 			
 			function updateTable3() {
@@ -363,7 +363,7 @@
 				$("#table3waiting").show();
 				var geneSetNameValue = document.getElementById("selctedNodeName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
-				$.getJSON("getGeneSetMembers.jsp", parms).done(handleTable3Response);
+				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable3Response);
 			}
 			
 			function handleTable2Response(response) {
