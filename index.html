@@ -100,8 +100,9 @@
 					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
 				}
 				
-				canvas1.width = window.innerWidth*2/3-50;
+				canvas1.width = window.innerWidth * 0.49;
 				canvas1.height = canvas1.width;
+
 				var cnv4=document.getElementById('canvas1');
 				var ctx4=cnv4.getContext('2d');
 				ctx4.clearRect(0, 0, canvas1.width, canvas1.height);
@@ -239,7 +240,7 @@
 				t.rows.add( tableData );
 				t.draw();
 				
-				canvas2.width = window.innerWidth*2/3-50;
+				canvas2.width = window.innerWidth * 0.49;
 				canvas2.height = canvas2.width;
 				var cx2 = new CanvasXpress(
 					"canvas2",
@@ -464,11 +465,19 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					<div class="col-sm-8">	
+					<div class="col-sm-6">	
 						<h2 class="result">Partial Correlation Heatmap</h2>
-						<canvas id="canvas1" width="1100" height="1000"></canvas>
+						<canvas id="canvas1" width="100%" height="1000"></canvas>
 					</div>
-					<div class="col-sm-4">	
+					<div class="col-sm-6">	
+						<h2 class="result">Partial Correlation Network</h2>
+						<canvas id="canvas2" width="100%" height="1000"></canvas>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">	
+					<div class="col-sm-6">	
 						<h2 class="result">Gene set (click on dendrogram to select)</h2>
 						<h3 class="result">Name</h3>
 						<p id="selctedLeafName" class="result"> </p>
@@ -494,15 +503,7 @@
 						</table>
 						<p id="table2waiting" class="waitmessage">Please wait. Getting data ....</p>
 					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">	
-					<div class="col-sm-8">	
-						<h2 class="result">Partial Correlation Network</h2>
-						<canvas id="canvas2" width="1100" height="1000"></canvas>
-					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-6">
 						<canvas id="canvas3" class="result" width="450" height="300"></canvas>
 						<h2 class="result">Gene set (click on a node to select)</h2>
 						<h3 class="result">Name</h3>
