@@ -5,6 +5,7 @@
 		<script src="http://canvasxpress.org/js/canvasXpress.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.css">
 		<script type="text/javascript" language="javascript" src="/js/jquery-2.1.1.min.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 		<script type="text/javascript" language="javascript" src="/js/jquery.dataTables.min.js"></script>
 		<link href="/shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />		
 		<link rel="stylesheet" type="text/css" href="/TableTools/css/dataTables.tableTools.css">
@@ -17,6 +18,36 @@
 				$(".result").hide();
 				$(".display").hide();
 				$(".waitmessage").hide();
+				var availableGenesets = [
+      				"KEGG_ENDOCYTOSIS",
+					"KEGG_PATHWAYS_IN_CANCER",
+					"KEGG_ERBB_SIGNALING_PATHWAY",
+					"KEGG_FOCAL_ADHESION",
+					"KEGG_NEUROTROPHIN_SIGNALING_PATHWAY",	
+					"KEGG_ALZHEIMERS_DISEASE",
+					"KEGG_FC_GAMMA_R_MEDIATED_PHAGOCYTOSIS",
+					"KEGG_ADHERENS_JUNCTION",
+					"KEGG_CHRONIC_MYELOID_LEUKEMIA",	
+					"KEGG_FC_EPSILON_RI_SIGNALING_PATHWAY",
+					"KEGG_MAPK_SIGNALING_PATHWAY",
+					"KEGG_ENDOMETRIAL_CANCER",
+					"KEGG_CHEMOKINE_SIGNALING_PATHWAY",
+					"KEGG_COLORECTAL_CANCER",
+					"KEGG_INSULIN_SIGNALING_PATHWAY",
+					"KEGG_B_CELL_RECEPTOR_SIGNALING_PATHWAY",
+					"KEGG_T_CELL_RECEPTOR_SIGNALING_PATHWAY",
+					"KEGG_RENAL_CELL_CARCINOMA",
+					"KEGG_NOTCH_SIGNALING_PATHWAY",
+					"KEGG_NATURAL_KILLER_CELL_MEDIATED_CYTOTOXICITY",
+					"KEGG_PROSTATE_CANCER",
+					"KEGG_VASOPRESSIN_REGULATED_WATER_REABSORPTION",
+					"KEGG_PANCREATIC_CANCER"
+    			];
+    			$( "#textfieldGeneSet" ).autocomplete({
+      				source: availableGenesets
+    			});
+    			var parms = {geneSetCollection :"all"};
+				$.getJSON("/pcxn/getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
 			var pCutOffValue = 0.05;
 			var topNValue = 0;
@@ -26,9 +57,34 @@
 			var	geneSetCollectionValue;
 			var upGenesetNamesUpperCase=[];
 			var downGenesetNamesUpperCase=[];
+			var pathprintGeneSets = [];
+			var mSigDBC2CPGeneSets = [];
+			var mSigDBC5GeneSets = [];
+									
+			function handleAvailableGeneSetsResponse (response) {
+				pathprintGeneSets = response.pathprint;
+				mSigDBC2CPGeneSets = response.MSigDBC2CP;
+				mSigDBC5GeneSets = response.MSigDBC5;
+				
+				var availableGenesets = pathprintGeneSets.concat(mSigDBC2CPGeneSets);
+				availableGenesets = availableGenesets.concat(mSigDBC5GeneSets);
+				//alert(availableGenesets.length);
+				$( "#textfieldGeneSet" ).autocomplete({
+      				source: availableGenesets
+    			});
+    			
+    			availableGenesets = availableGenesets.sort();
+    			for(var i = 0; i < availableGenesets.length; ++i){
+					$('#selectGeneSet1')
+         				.append($("<option></option>")
+         				.attr("value",availableGenesets[i])
+         				.text(availableGenesets[i])); 
+				}    				
+			}
 			
 			function handleForm1Response(response) {				
 				// Get unique geneset names
+				if(!response) return;
 				form1Response = response;
 				if (form1Response.length==0){
 					alert("None of your gene set names match those in the current database. The database is still in development. Please contact W.Wei@sheffield.ac.uk to help the development of the database.");
@@ -414,7 +470,7 @@
 			$(window).resize(function() {
 				clearTimeout(resizeTimer);
 				resizeTimer = setTimeout(doSomething, 100);
-			});
+			});		
 		</script>
 	</head>
 	<body>
@@ -425,7 +481,33 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col-sm-6">
+					<h2>Explore PCxN</h2>
+					<form id="form2" class="well">						
+						<label for="inputTopN2">Find top</label>
+						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
+						<label>Correlated with</label><br>
+						<input type="radio" id="radioSelectGeneSet" name="form2geneset" value="selectGeneSet" checked>Select a gene set
+						<br>
+						<select id="selectGeneSet1" size="1">
+						</select>
+						<br>
+						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="searchGeneSet">Search a gene set 
+						<input id="textfieldGeneSet">																
+						<br>																	
+						<br><br><br><br><br><br><br><br><br><br>
+						<label for="inputCorrelation"> with absolute correlation coefficient greater than</label>
+						<input type="text" id="inputCorrelation" value="0.05"/><br>
+						
+						<label for="inputpValue">and p-value less than</label><br>
+						<input type="text" id="inputpValue" value="0.05"/><br><br> 
+												
+						<input type="button" id="button3" value=" GO " onclick="javascript:send();"/>
+						<input type="reset" id="button4" value=" Reset "/>
+					</form>
+				</div>
+				<div class="col-sm-6">
+					<h2>Analyze Multiple Gene Sets</h2>
 					<form id="form1" class="well">
 						<label for="upgenesets">Find partial correlation in up-regulated gene sets </label><br>
 						<textarea rows="7" cols="50" id="upgenesets"></textarea><br>
@@ -469,7 +551,7 @@
 						<canvas id="canvas1" width="1100" height="1000"></canvas>
 					</div>
 					<div class="col-sm-4">	
-						<h2 class="result">Gene set (click on dendrogram to select)</h2>
+						<h2 class="result">Gene set (click on gene set name to select)</h2>
 						<h3 class="result">Name</h3>
 						<p id="selctedLeafName" class="result"> </p>
 						<h3 class="result">External links</h3>
@@ -561,5 +643,15 @@
 				</div>
 			</div>
 		</div>
+	<script>
+		function changeRadioSelection (e){
+			$('#radioSelectGeneSet').prop('checked', true);
+		}
+		function changeRadioSelection2 (e, ui){
+			$('#radioSearchGeneSet').prop('checked', true);
+		}				
+		$( "#textfieldGeneSet" ).on( "autocompleteselect", changeRadioSelection2);
+		document.getElementById("selectGeneSet1").addEventListener("change", changeRadioSelection);	
+	</script>
 	</body>
 </html>
