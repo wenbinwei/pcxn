@@ -376,6 +376,11 @@
 					}					
 				}
 				
+				if(((upGenesetNamesUpperCase.length + downGenesetNamesUpperCase.length)==1) && (newTopNValue==0)) {
+					alert("Please specify the number of related gene sets to be found!");
+					return;
+				}
+				
 				if (upGenesetNamesVal && downGenesetNamesVal)
 				{
 					newGeneSetsValue= upGenesetNamesVal + "\n" + downGenesetNamesVal;
@@ -404,6 +409,34 @@
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
 				}
+			};
+			
+			function sendForm2(){
+				$("#inputTopN").val($("#inputTopN2").val());
+				$("#inputpValue").val($("#inputpValue2").val());				
+				$("#inputCorrelation").val($("#inputCorrelation2").val());
+				//alert($("#inputCorrelation").val());
+				//return;		
+				var val = $('input:radio[name=form2geneset]:checked').val();
+
+				if(val =="selectGeneSet") {
+					$("#upgenesets").val($('#selectGeneSet1').val());
+				} else {
+					$("#upgenesets").val($('#textfieldGeneSet').val());
+				}
+				$("#downgenesets").val("") ;
+				var newGeneSetsValue = $("#upgenesets").val();
+				if(mSigDBC2CPGeneSets.indexOf(newGeneSetsValue) >=0) {
+					$("#selectGeneSetCollection").val( "MSigDBC2CP");
+				}
+				else if(mSigDBC5GeneSets.indexOf(newGeneSetsValue) >=0) {
+					$("#selectGeneSetCollection").val("MSigDBC5");
+				}
+				else if(pathprintGeneSets.indexOf(newGeneSetsValue) >=0) {
+					$("#selectGeneSetCollection").val( "pathprint");
+				}
+				else {alert("Your gene set is not in the database");}
+				javascript:send();
 			};
 			
 			function updateTable2() {
@@ -496,13 +529,13 @@
 						<input id="textfieldGeneSet">																
 						<br>																	
 						<br><br><br><br><br><br><br><br><br><br>
-						<label for="inputCorrelation"> with absolute correlation coefficient greater than</label>
-						<input type="text" id="inputCorrelation" value="0.05"/><br>
+						<label for="inputCorrelation2"> with absolute correlation coefficient greater than</label>
+						<input type="text" id="inputCorrelation2" value="0.05"/><br>
 						
-						<label for="inputpValue">and p-value less than</label><br>
-						<input type="text" id="inputpValue" value="0.05"/><br><br> 
+						<label for="inputpValue2">and p-value less than</label><br>
+						<input type="text" id="inputpValue2" value="0.05"/><br><br> 
 												
-						<input type="button" id="button3" value=" GO " onclick="javascript:send();"/>
+						<input type="button" id="button3" value=" GO " onclick="javascript:sendForm2();"/>
 						<input type="reset" id="button4" value=" Reset "/>
 					</form>
 				</div>
