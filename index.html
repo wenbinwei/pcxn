@@ -18,34 +18,6 @@
 				$(".result").hide();
 				$(".display").hide();
 				$(".waitmessage").hide();
-				var availableGenesets = [
-      				"KEGG_ENDOCYTOSIS",
-					"KEGG_PATHWAYS_IN_CANCER",
-					"KEGG_ERBB_SIGNALING_PATHWAY",
-					"KEGG_FOCAL_ADHESION",
-					"KEGG_NEUROTROPHIN_SIGNALING_PATHWAY",	
-					"KEGG_ALZHEIMERS_DISEASE",
-					"KEGG_FC_GAMMA_R_MEDIATED_PHAGOCYTOSIS",
-					"KEGG_ADHERENS_JUNCTION",
-					"KEGG_CHRONIC_MYELOID_LEUKEMIA",	
-					"KEGG_FC_EPSILON_RI_SIGNALING_PATHWAY",
-					"KEGG_MAPK_SIGNALING_PATHWAY",
-					"KEGG_ENDOMETRIAL_CANCER",
-					"KEGG_CHEMOKINE_SIGNALING_PATHWAY",
-					"KEGG_COLORECTAL_CANCER",
-					"KEGG_INSULIN_SIGNALING_PATHWAY",
-					"KEGG_B_CELL_RECEPTOR_SIGNALING_PATHWAY",
-					"KEGG_T_CELL_RECEPTOR_SIGNALING_PATHWAY",
-					"KEGG_RENAL_CELL_CARCINOMA",
-					"KEGG_NOTCH_SIGNALING_PATHWAY",
-					"KEGG_NATURAL_KILLER_CELL_MEDIATED_CYTOTOXICITY",
-					"KEGG_PROSTATE_CANCER",
-					"KEGG_VASOPRESSIN_REGULATED_WATER_REABSORPTION",
-					"KEGG_PANCREATIC_CANCER"
-    			];
-    			$( "#textfieldGeneSet" ).autocomplete({
-      				source: availableGenesets
-    			});
     			var parms = {geneSetCollection :"all"};
 				$.getJSON("/pcxn/getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
