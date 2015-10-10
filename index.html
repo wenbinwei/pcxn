@@ -375,6 +375,9 @@
 					pCutOffValue = newPCutOffValue;
 					corrCutOffValue = newCorrCutOffValue;
 					geneSetCollectionValue = newGeneSetCollectionValue;
+					$(".result").hide();
+					$(".display").hide();
+					$(".waitmessage").hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
 					$.getJSON("/pcxn/getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
@@ -556,7 +559,7 @@
 						<canvas id="canvas1" width="1100" height="1000"></canvas>
 					</div>
 					<div class="col-sm-4">	
-						<h2 class="result">Gene set (click on gene set name to select)</h2>
+						<h2 class="result">Gene set (click on a gene set name to select)</h2>
 						<h3 class="result">Name</h3>
 						<p id="selctedLeafName" class="result"> </p>
 						<h3 class="result">External links</h3>
