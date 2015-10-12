@@ -291,50 +291,28 @@
 			}
 
 			function send(){
-				var upGenesetNamesVal = $("#upgenesets").val();
-				var downGenesetNamesVal = $("#downgenesets").val();
+				var upGenesetNames = $("#upgenesets").val();
+				var downGenesetNames = $("#downgenesets").val();
 				var newTopNValue = $("#inputTopN").val();
 				var newPCutOffValue = $("#inputpValue").val();
 				var newCorrCutOffValue = $("#inputCorrelation").val();
 				var newGeneSetCollectionValue = $("#selectGeneSetCollection").val();
 				var newGeneSetsValue;
-				
-				if (!upGenesetNamesVal && !downGenesetNamesVal)
+
+                                // JSP API gets confused with leading and traling blank lines.
+                                // So eliminate those, and at the same time convert to upper case.
+                                upGenesetNames = upGenesetNames.trim().toUpperCase().split("\n")
+                                downGenesetNames = downGenesetNames.trim().toUpperCase().split("\n")
+                                $('#upgenesets').val(upGenesetNames.join("\n"))
+                                $('#downgenesets').val(downGenesetNames.join("\n"))
+
+				if (upGenesetNames.length == 0 && downGenesetNames.length == 0)
 				{
 					alert("Please enter a list of gene sets!");
 					return;
 				}
-				
-				if (upGenesetNamesVal)
-				{
-					upGenesetNamesUpperCase = upGenesetNamesVal.split("\n");
-					for (var i = 0; i < upGenesetNamesUpperCase.length; ++i){
-						upGenesetNamesUpperCase[i] = upGenesetNamesUpperCase[i].trim().toUpperCase();
-					}
-				}
-				
-				if(downGenesetNamesVal)
-				{
-					downGenesetNamesUpperCase = downGenesetNamesVal.split("\n");
-					for (var i = 0; i < downGenesetNamesUpperCase.length; ++i){
-						downGenesetNamesUpperCase[i] = downGenesetNamesUpperCase[i].trim().toUpperCase();
-					}					
-				}
-				
-				if (upGenesetNamesVal && downGenesetNamesVal)
-				{
-					newGeneSetsValue= upGenesetNamesVal + "\n" + downGenesetNamesVal;
-				}
-				
-				if (!upGenesetNamesVal && downGenesetNamesVal)
-				{
-					newGeneSetsValue= downGenesetNamesVal;
-				}
-				
-				if (upGenesetNamesVal && !downGenesetNamesVal)
-				{
-					newGeneSetsValue= upGenesetNamesVal;
-				}
+
+                                newGeneSetsValue = upGenesetNames.concat(downGenesetNames).join("\n").trim()
 
 				if (newGeneSetsValue!=geneSetsValue |newTopNValue != topNValue | newPCutOffValue != pCutOffValue | newCorrCutOffValue != corrCutOffValue | newGeneSetCollectionValue != geneSetCollectionValue) {
 					//alert("You have changed parameters!")
