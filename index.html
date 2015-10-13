@@ -25,8 +25,8 @@
 			var geneSetsValue;
 			var	corrCutOffValue = 0.05;
 			var	geneSetCollectionValue;
-			var upGenesetNamesUpperCase=[];
-			var downGenesetNamesUpperCase=[];
+			var upGenesetNames = [];
+			var downGenesetNames = [];
 
                         function fitCanvasToContainer(selector) {
                             var canvas = $(selector)[0]
@@ -187,19 +187,20 @@
 				}
 				
 				//network
-				var nodes = new Array();
+				var nodes = [];
 				var nodeIndex = 0;
 				
 				for(var i = 0; i < outputGenesetNames.length; ++i){
-					if($("#upgenesets").val() && (upGenesetNamesUpperCase.indexOf(outputGenesetNames[i].toUpperCase()) >= 0) ) {
-						nodes[nodeIndex] = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "sphere"};
-					} else if($("#downgenesets").val() && (downGenesetNamesUpperCase.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
-						nodes[nodeIndex] = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "square"};
+                    var newNode
+					if($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0) ) {
+						newNode = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "sphere"};
+					} else if($("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
+						newNode = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "square"};
 					}
 					else {
-						nodes[nodeIndex] = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "triangle"};
+						newNode = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "triangle"};
 					}
-					nodeIndex++;
+					nodes.push(newNode)
 				}
 				
 				var tableData = new Array();
@@ -300,8 +301,8 @@
 			}
 
 			function send(){
-				var upGenesetNames = $("#upgenesets").val();
-				var downGenesetNames = $("#downgenesets").val();
+				var upVal = $("#upgenesets").val();
+				var downVal = $("#downgenesets").val();
 				var newTopNValue = $("#inputTopN").val();
 				var newPCutOffValue = $("#inputpValue").val();
 				var newCorrCutOffValue = $("#inputCorrelation").val();
@@ -310,8 +311,8 @@
 
                 // JSP API gets confused with leading and traling blank lines.
                 // So eliminate those, and at the same time convert to upper case.
-                upGenesetNames = upGenesetNames.trim().toUpperCase().split("\n")
-                downGenesetNames = downGenesetNames.trim().toUpperCase().split("\n")
+                upGenesetNames = upVal.trim().toUpperCase().split("\n")
+                downGenesetNames = downVal.trim().toUpperCase().split("\n")
                 $('#upgenesets').val(upGenesetNames.join("\n"))
                 $('#downgenesets').val(downGenesetNames.join("\n"))
 
