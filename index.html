@@ -308,12 +308,12 @@
 				var newGeneSetCollectionValue = $("#selectGeneSetCollection").val();
 				var newGeneSetsValue;
 
-                                // JSP API gets confused with leading and traling blank lines.
-                                // So eliminate those, and at the same time convert to upper case.
-                                upGenesetNames = upGenesetNames.trim().toUpperCase().split("\n")
-                                downGenesetNames = downGenesetNames.trim().toUpperCase().split("\n")
-                                $('#upgenesets').val(upGenesetNames.join("\n"))
-                                $('#downgenesets').val(downGenesetNames.join("\n"))
+                // JSP API gets confused with leading and traling blank lines.
+                // So eliminate those, and at the same time convert to upper case.
+                upGenesetNames = upGenesetNames.trim().toUpperCase().split("\n")
+                downGenesetNames = downGenesetNames.trim().toUpperCase().split("\n")
+                $('#upgenesets').val(upGenesetNames.join("\n"))
+                $('#downgenesets').val(downGenesetNames.join("\n"))
 
 				if (upGenesetNames.length == 0 && downGenesetNames.length == 0)
 				{
@@ -321,7 +321,7 @@
 					return;
 				}
 
-                                newGeneSetsValue = upGenesetNames.concat(downGenesetNames).join("\n").trim()
+                newGeneSetsValue = upGenesetNames.concat(downGenesetNames).join("\n").trim()
 
 				if (newGeneSetsValue!=geneSetsValue |newTopNValue != topNValue | newPCutOffValue != pCutOffValue | newCorrCutOffValue != corrCutOffValue | newGeneSetCollectionValue != geneSetCollectionValue) {
 					//alert("You have changed parameters!")
