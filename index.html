@@ -28,19 +28,19 @@
 			var upGenesetNames = [];
 			var downGenesetNames = [];
 
-                        function fitCanvasToContainer(selector) {
-                            var canvas = $(selector)[0]
-                            canvas.style.width = '100%'
-                            canvas.style.height = '100%'
-                            canvas.width = canvas.offsetWidth
-                            canvas.height = canvas.width
-                        }
+            function fitCanvasToContainer(selector) {
+                var canvas = $(selector)[0]
+                canvas.style.width = '100%'
+                canvas.style.height = '100%'
+                canvas.width = canvas.offsetWidth
+                canvas.height = canvas.width
+            }
 
-                        function sizeCanvas() {
-                            fitCanvasToContainer('#canvas1')
-                            fitCanvasToContainer('#canvas2')
-                        }
-			
+            function sizeCanvas() {
+                fitCanvasToContainer('#canvas1')
+                fitCanvasToContainer('#canvas2')
+            }
+
 			function handleForm1Response(response) {				
 				// Get unique geneset names
 				form1Response = response;
