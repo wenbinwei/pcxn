@@ -395,7 +395,7 @@
 			 	$(tableid).show();
 			}
 			
-			function doSomething() {
+			function doneResizing() {
 				//alert("I'm done resizing for the moment");
 				handleForm1Response(form1Response);
 			};
@@ -403,7 +403,7 @@
 			var resizeTimer;
 			$(window).resize(function() {
 				clearTimeout(resizeTimer);
-				resizeTimer = setTimeout(doSomething, 100);
+				resizeTimer = setTimeout(doneResizing, 100);
 			});
 		</script>
 	</head>
