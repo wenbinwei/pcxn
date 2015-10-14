@@ -188,17 +188,18 @@
 				
 				//network
 				var nodes = [];
-				var nodeIndex = 0;
 				
 				for(var i = 0; i < outputGenesetNames.length; ++i){
                     var newNode
 					if($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0) ) {
-						newNode = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "sphere"};
+                        // Member of the up-regulated geneset
+						newNode = {"id": outputGenesetNames[i], "color" : "rgb(200,200,200)", "shape" : "sphere"};
 					} else if($("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
-						newNode = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "square"};
+                        // Member of the down-regulated geneset
+						newNode = {"id": outputGenesetNames[i], "color" : "rgb(55,55,55)", "shape" : "sphere"};
 					}
 					else {
-						newNode = {"id": outputGenesetNames[i], "color" : "rgb(0,255,0)", "shape" : "triangle"};
+						newNode = {"id": outputGenesetNames[i], "color" : "rgb(100,100,100)", "shape" : "triangle"};
 					}
 					nodes.push(newNode)
 				}
