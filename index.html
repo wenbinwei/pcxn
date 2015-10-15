@@ -13,7 +13,7 @@
 
 		<script type="text/javascript">
 			$(document).ready(function(){
-                                sizeCanvas()
+                sizeCanvas()
 				//$(".result").show();
 				$(".result").hide();
 				$(".display").hide();
@@ -28,17 +28,27 @@
 			var upGenesetNames = [];
 			var downGenesetNames = [];
 
-            function fitCanvasToContainer(selector) {
-                var canvas = $(selector)[0]
-                canvas.style.width = '100%'
-                canvas.style.height = '100%'
-                canvas.width = canvas.offsetWidth
-                canvas.height = canvas.width
+            function makeCanvasFitBoxContainer(selector) {
+                // Throw away the canvas element and make a new one.
+                var selected = $(selector)[0]
+                var box = $(selected).closest('.box')[0]
+                var id = selected.id
+
+                var $newCanvas = $("<canvas>")
+                $newCanvas.attr('id', id)
+
+                $(box).children('div').replaceWith($newCanvas)
+                var newCanvas = $newCanvas[0]
+                newCanvas.style.width = '100%'
+                newCanvas.style.height = '100%'
+                newCanvas.width = box.offsetWidth - 15
+                console.log("fit", id, newCanvas.width)
+                newCanvas.height = newCanvas.width
             }
 
             function sizeCanvas() {
-                fitCanvasToContainer('#canvas1')
-                fitCanvasToContainer('#canvas2')
+                makeCanvasFitBoxContainer('#canvas1')
+                makeCanvasFitBoxContainer('#canvas2')
             }
 
 			function handleForm1Response(response) {				
@@ -113,6 +123,8 @@
 					partialCorrelationMatrix[indexA][indexB] = form1Response[k][2];
 					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
 				}
+
+                sizeCanvas()
 				
 				var cnv4=document.getElementById('canvas1');
 				var ctx4=cnv4.getContext('2d');
@@ -454,13 +466,20 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					<div class="col-sm-6">	
+                    <!-- The "box" class here is used to find the right DIV when resizing.
+                         See sizeCanvas() -->
+					<div class="col-sm-6 box">
 						<h2 class="result">Partial Correlation Heatmap</h2>
-						<canvas id="canvas1"></canvas>
+                        <!-- This div gets replaced by sizeCanvas() -->
+                        <div>
+                            <canvas id="canvas1"></canvas>
+                        </div>
 					</div>
-					<div class="col-sm-6">	
+					<div class="col-sm-6 box">
 						<h2 class="result">Partial Correlation Network</h2>
-						<canvas id="canvas2"></canvas>
+                        <div>
+                            <canvas id="canvas2"></canvas>
+                        </div>
 					</div>
 				</div>
 			</div>
