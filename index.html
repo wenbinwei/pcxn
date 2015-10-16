@@ -5,6 +5,7 @@
 		<script src="http://canvasxpress.org/js/canvasXpress.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.css">
 		<script type="text/javascript" language="javascript" src="/js/jquery-2.1.1.min.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 		<script type="text/javascript" language="javascript" src="/js/jquery.dataTables.min.js"></script>
 		<link href="/shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />		
 		<link rel="stylesheet" type="text/css" href="/TableTools/css/dataTables.tableTools.css">
@@ -18,6 +19,8 @@
 				$(".result").hide();
 				$(".display").hide();
 				$(".waitmessage").hide();
+    			var parms = {geneSetCollection :"all"};
+				$.getJSON("/pcxn/getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
 			var pCutOffValue = 0.05;
 			var topNValue = 0;
@@ -27,6 +30,9 @@
 			var	geneSetCollectionValue;
 			var upGenesetNames = [];
 			var downGenesetNames = [];
+			var pathprintGeneSets = [];
+			var mSigDBC2CPGeneSets = [];
+			var mSigDBC5GeneSets = [];
 
             function makeCanvasFitBoxContainer(selector) {
                 // Throw away the canvas element and make a new one.
@@ -51,8 +57,30 @@
                 makeCanvasFitBoxContainer('#canvas2')
             }
 
+			function handleAvailableGeneSetsResponse (response) {
+				pathprintGeneSets = response.pathprint;
+				mSigDBC2CPGeneSets = response.MSigDBC2CP;
+				mSigDBC5GeneSets = response.MSigDBC5;
+				
+				var availableGenesets = pathprintGeneSets.concat(mSigDBC2CPGeneSets);
+				availableGenesets = availableGenesets.concat(mSigDBC5GeneSets);
+				//alert(availableGenesets.length);
+				$( "#textfieldGeneSet" ).autocomplete({
+      				source: availableGenesets
+    			});
+    			
+    			availableGenesets = availableGenesets.sort();
+    			for(var i = 0; i < availableGenesets.length; ++i){
+					$('#selectGeneSet1')
+         				.append($("<option></option>")
+         				.attr("value",availableGenesets[i])
+         				.text(availableGenesets[i])); 
+				}    				
+			}
+			
 			function handleForm1Response(response) {				
 				// Get unique geneset names
+				if(!response) return;
 				form1Response = response;
 				if (form1Response.length==0){
 					alert("None of your gene set names match those in the current database. The database is still in development. Please contact W.Wei@sheffield.ac.uk to help the development of the database.");
@@ -337,6 +365,11 @@
 
                 newGeneSetsValue = upGenesetNames.concat(downGenesetNames).join("\n").trim()
 
+				if(((upGenesetNames.length + downGenesetNames.length)==1) && (newTopNValue==0)) {
+					alert("Please specify the number of related gene sets to be found!");
+					return;
+				}
+
 				if (newGeneSetsValue!=geneSetsValue |newTopNValue != topNValue | newPCutOffValue != pCutOffValue | newCorrCutOffValue != corrCutOffValue | newGeneSetCollectionValue != geneSetCollectionValue) {
 					//alert("You have changed parameters!")
 					geneSetsValue = newGeneSetsValue;
@@ -344,12 +377,43 @@
 					pCutOffValue = newPCutOffValue;
 					corrCutOffValue = newCorrCutOffValue;
 					geneSetCollectionValue = newGeneSetCollectionValue;
+					$(".result").hide();
+					$(".display").hide();
+					$(".waitmessage").hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
 					$.getJSON("/pcxn/getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
 				}
+			};
+			
+			function sendForm2(){
+				$("#inputTopN").val($("#inputTopN2").val());
+				$("#inputpValue").val($("#inputpValue2").val());				
+				$("#inputCorrelation").val($("#inputCorrelation2").val());
+				//alert($("#inputCorrelation").val());
+				//return;		
+				var val = $('input:radio[name=form2geneset]:checked').val();
+
+				if(val =="selectGeneSet") {
+					$("#upgenesets").val($('#selectGeneSet1').val());
+				} else {
+					$("#upgenesets").val($('#textfieldGeneSet').val());
+				}
+				$("#downgenesets").val("") ;
+				var newGeneSetsValue = $("#upgenesets").val();
+				if(mSigDBC2CPGeneSets.indexOf(newGeneSetsValue) >=0) {
+					$("#selectGeneSetCollection").val( "MSigDBC2CP");
+				}
+				else if(mSigDBC5GeneSets.indexOf(newGeneSetsValue) >=0) {
+					$("#selectGeneSetCollection").val("MSigDBC5");
+				}
+				else if(pathprintGeneSets.indexOf(newGeneSetsValue) >=0) {
+					$("#selectGeneSetCollection").val( "pathprint");
+				}
+				else {alert("Your gene set is not in the database");}
+				javascript:send();
 			};
 			
 			function updateTable2() {
@@ -427,7 +491,33 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col-sm-6">
+					<h2>Explore PCxN</h2>
+					<form id="form2" class="well">						
+						<label for="inputTopN2">Find top</label>
+						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
+						<label>Correlated with</label><br>
+						<input type="radio" id="radioSelectGeneSet" name="form2geneset" value="selectGeneSet" checked>Select a gene set
+						<br>
+						<select id="selectGeneSet1" size="1">
+						</select>
+						<br>
+						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="searchGeneSet">Search a gene set 
+						<input id="textfieldGeneSet">																
+						<br>																	
+						<br><br><br><br><br><br><br><br><br><br>
+						<label for="inputCorrelation2"> with absolute correlation coefficient greater than</label>
+						<input type="text" id="inputCorrelation2" value="0.05"/><br>
+						
+						<label for="inputpValue2">and p-value less than</label><br>
+						<input type="text" id="inputpValue2" value="0.05"/><br><br> 
+												
+						<input type="button" id="button3" value=" GO " onclick="javascript:sendForm2();"/>
+						<input type="reset" id="button4" value=" Reset "/>
+					</form>
+				</div>
+				<div class="col-sm-6">
+					<h2>Analyze Multiple Gene Sets</h2>
 					<form id="form1" class="well">
 						<label for="upgenesets">Find partial correlation between up-regulated gene sets</label><br>
 						<textarea rows="7" cols="50" id="upgenesets"></textarea><br>
@@ -484,9 +574,10 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-sm-12">	
+				<div class="col-sm-12">
+
 					<div class="col-sm-6">	
-						<h2 class="result">Gene set (click on dendrogram to select)</h2>
+						<h2 class="result">Gene set (click on a gene set name to select)</h2>
 						<h3 class="result">Name</h3>
 						<p id="selctedLeafName" class="result"> </p>
 						<h3 class="result">External links</h3>
@@ -570,5 +661,15 @@
 				</div>
 			</div>
 		</div>
+	<script>
+		function changeRadioSelection (e){
+			$('#radioSelectGeneSet').prop('checked', true);
+		}
+		function changeRadioSelection2 (e, ui){
+			$('#radioSearchGeneSet').prop('checked', true);
+		}				
+		$( "#textfieldGeneSet" ).on( "autocompleteselect", changeRadioSelection2);
+		document.getElementById("selectGeneSet1").addEventListener("change", changeRadioSelection);	
+	</script>
 	</body>
 </html>

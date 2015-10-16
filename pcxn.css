@@ -16,12 +16,12 @@ body {
     background-color: lightblue;
 }
 
-#form1 {
+#form1,  #form2 {
 	width: 550px;
-	height: 700px;
+	height: 600px;
 }
 
-#button1 {
+#button1, #button3 {
 	background-color: green;
 	color: black;
 	font-size: 1.5em;
@@ -31,7 +31,7 @@ body {
     width: auto;
 }
 
-#button2 {
+#button2, #button4 {
 	background-color: red;
 	color: black;
 	font-size: 1.5em;
@@ -51,10 +51,14 @@ body {
 	position: absolute;
 }
 
+#textfieldGeneSet, #selectGeneSet1 {
+	width: 500px;
+}
+
 textarea { 
     resize: none; 
     font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	width: 500px;
-    height: 140px;
+    height: 90px;
 }
