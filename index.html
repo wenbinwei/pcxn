@@ -69,13 +69,29 @@
       				source: availableGenesets
     			});
     			
-    			availableGenesets = availableGenesets.sort();
-    			for(var i = 0; i < availableGenesets.length; ++i){
-					$('#selectGeneSet1')
+    			pathprintGeneSets = pathprintGeneSets.sort();
+    			for(var i = 0; i < pathprintGeneSets.length; ++i){
+					$('#selectPathprint')
          				.append($("<option></option>")
-         				.attr("value",availableGenesets[i])
-         				.text(availableGenesets[i])); 
-				}    				
+         				.attr("value",pathprintGeneSets[i])
+         				.text(pathprintGeneSets[i])); 
+				}
+				
+				mSigDBC2CPGeneSets = mSigDBC2CPGeneSets.sort();
+    			for(var i = 0; i < mSigDBC2CPGeneSets.length; ++i){
+					$('#selectMSigDBC2CP')
+         				.append($("<option></option>")
+         				.attr("value",mSigDBC2CPGeneSets[i])
+         				.text(mSigDBC2CPGeneSets[i])); 
+				} 
+				
+				mSigDBC5GeneSets = mSigDBC5GeneSets.sort();
+    			for(var i = 0; i < mSigDBC5GeneSets.length; ++i){
+					$('#selectMSigDBC5')
+         				.append($("<option></option>")
+         				.attr("value",mSigDBC5GeneSets[i])
+         				.text(mSigDBC5GeneSets[i])); 
+				} 				
 			}
 			
 			function handleForm1Response(response) {				
@@ -396,8 +412,12 @@
 				//return;		
 				var val = $('input:radio[name=form2geneset]:checked').val();
 
-				if(val =="selectGeneSet") {
-					$("#upgenesets").val($('#selectGeneSet1').val());
+				if(val =="radioPathprint") {
+					$("#upgenesets").val($('#selectPathprint').val());
+				} else if (val == "radioMSigDBC2CP") {
+					$("#upgenesets").val($('#selectMSigDBC2CP').val());
+				} else if (val== "radioMSigDBC5") {
+					$("#upgenesets").val($('#selectMSigDBC5').val());
 				} else {
 					$("#upgenesets").val($('#textfieldGeneSet').val());
 				}
@@ -476,6 +496,18 @@
 				handleForm1Response(form1Response);
 			};
 			
+			function hideOpetionsAndResults() {			
+				$(".result").hide();
+				$(".display").hide();
+				$(".waitmessage").hide();
+				$("#label1").hide();
+				$("#inputCorrelation2").hide();
+				$("#label2").hide();
+				$("#inputpValue2").hide();
+				$("#button4").hide();
+				$("#button3").hide();
+			}
+						
 			var resizeTimer;
 			$(window).resize(function() {
 				clearTimeout(resizeTimer);
@@ -496,24 +528,34 @@
 					<form id="form2" class="well">						
 						<label for="inputTopN2">Find top</label>
 						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
-						<label>Correlated with</label><br>
-						<input type="radio" id="radioSelectGeneSet" name="form2geneset" value="selectGeneSet" checked>Select a gene set
+						<label>Correlated with</label><br>						
+						<input type="radio" id="radioMSigDBC2CP" name="form2geneset" value="radioMSigDBC2CP" checked>Select a gene set from MSigDB C2 CP (Canonical pathways)						    
 						<br>
-						<select id="selectGeneSet1" size="1">
+						<select id="selectMSigDBC2CP" size="1">
+						</select><br>
+						<input type="radio" id="radioMSigDBC5" name="form2geneset" value="radioMSigDBC5">Select a gene set from MSigDB C5 (GO gene sets)						    
+						<br>
+						<select id="selectMSigDBC5" size="1">
+						</select><br>
+						<input type="radio" id="radioPathprint" name="form2geneset" value="radioPathprint">Select a gene set from Pathprint						    
+						<br>
+						<select id="selectPathprint" size="1">
 						</select>
+						
 						<br>
 						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="searchGeneSet">Search a gene set 
-						<input id="textfieldGeneSet">																
+						<input id="textfieldGeneSet" onkeypress="hideOpetionsAndResults()">																
 						<br>																	
-						<br><br><br><br><br><br><br><br><br><br>
-						<label for="inputCorrelation2"> with absolute correlation coefficient greater than</label>
+						<br><br><br><br><br><br><br>
+						<label id="label1" for="inputCorrelation2"> with absolute correlation coefficient greater than</label>
 						<input type="text" id="inputCorrelation2" value="0.05"/><br>
 						
-						<label for="inputpValue2">and p-value less than</label><br>
+						<label id="label2" for="inputpValue2">and p-value less than</label><br>
 						<input type="text" id="inputpValue2" value="0.05"/><br><br> 
-												
+						
+						<input type="reset" id="button4" value=" Reset "/>												
 						<input type="button" id="button3" value=" GO " onclick="javascript:sendForm2();"/>
-						<input type="reset" id="button4" value=" Reset "/>
+
 					</form>
 				</div>
 				<div class="col-sm-6">
@@ -663,13 +705,29 @@
 		</div>
 	<script>
 		function changeRadioSelection (e){
-			$('#radioSelectGeneSet').prop('checked', true);
+			//$('#radioSelectGeneSet').prop('checked', true);
+			alert(e.target.id);
+			if(e.target.id =="selectPathprint") {
+				document.getElementById("radioPathprint").checked = true;
+			} else if(e.target.id =="selectMSigDBC2CP") {
+				document.getElementById("radioMSigDBC2CP").checked = true;
+			} else if(e.target.id =="selectMSigDBC5") {
+				document.getElementById("radioMSigDBC5").checked = true;
+			} else {}
 		}
-		function changeRadioSelection2 (e, ui){
+		function geneSetSearchCompleted (e, ui){
 			$('#radioSearchGeneSet').prop('checked', true);
+			$("#label1").show();
+			$("#inputCorrelation2").show();
+			$("#label2").show();
+			$("#inputpValue2").show();
+			$("#button4").show();
+			$("#button3").show();
 		}				
-		$( "#textfieldGeneSet" ).on( "autocompleteselect", changeRadioSelection2);
-		document.getElementById("selectGeneSet1").addEventListener("change", changeRadioSelection);	
+		$( "#textfieldGeneSet" ).on( "autocompleteselect", geneSetSearchCompleted);
+		document.getElementById("selectPathprint").addEventListener("change", changeRadioSelection);
+		document.getElementById("selectMSigDBC2CP").addEventListener("change", changeRadioSelection);
+		document.getElementById("selectMSigDBC5").addEventListener("change", changeRadioSelection);	
 	</script>
 	</body>
 </html>

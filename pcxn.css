@@ -51,7 +51,10 @@ body {
 	position: absolute;
 }
 
-#textfieldGeneSet, #selectGeneSet1 {
+#textfieldGeneSet, 
+#selectPathprint,
+#selectMSigDBC2CP,
+#selectMSigDBC5 {
 	width: 500px;
 }
 
