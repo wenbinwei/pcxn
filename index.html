@@ -16,6 +16,7 @@
 			$(document).ready(function(){
                 sizeCanvas()
 				//$(".result").show();
+				$("#form1").hide();
 				$(".result").hide();
 				$(".display").hide();
 				$(".waitmessage").hide();
@@ -141,6 +142,9 @@
 					alert(alertMessage);
 					return;
 				}
+				$(".pcxnInput").hide();
+				//$("#form1").hide();
+				//$("#form2").hide();
 				$(".result").show();
 				//alert(form1Response[0]);
 				//alert(form1Response[0][0]);
@@ -233,7 +237,7 @@
 							}
 							document.getElementById("selctedLeafNameLink").innerHTML = htmlLink;
 							document.getElementById("selctedLeafNameLink").href = htmlLink;
-							updateTable2();
+							updateTable2(selctedGeneSetName);
 						}
 					}
 				);
@@ -323,22 +327,23 @@
 						"showAnimation": true,
 						"disableMenu" : true,
 						"disableToolbar" : true,
-						"resizable" : false
+						"resizable" : false,
+						"nodeFontSize" : 7
 					},
 					{
 						'click' : function(o, e, t) {
 							var eventDataId = t.getEventDataId(e);
 							var selctedGeneSetName = t.data.nodes[eventDataId].id;
-							document.getElementById("selctedNodeName").innerHTML = selctedGeneSetName;
+							document.getElementById("selctedLeafName").innerHTML = selctedGeneSetName;
 							var htmlLink = "";
 							if (geneSetCollectionValue.match(/MSigDB/)) {
 								htmlLink = "http://www.broadinstitute.org/gsea/msigdb/cards/" + selctedGeneSetName +".html";
 							} else if (geneSetCollectionValue.match(/pathprint/)) {
 								htmlLink = "http://compbio.sph.harvard.edu/hidelab/pathprint/Pathprint.html";
 							}
-							document.getElementById("selctedNodeNameLink").innerHTML = htmlLink;
-							document.getElementById("selctedNodeNameLink").href = htmlLink;
-							updateTable3();
+							document.getElementById("selctedLeafNameLink").innerHTML = htmlLink;
+							document.getElementById("selctedLeafNameLink").href = htmlLink;
+							updateTable2(selctedGeneSetName);
 						}
 					}
 				);
@@ -436,10 +441,10 @@
 				javascript:send();
 			};
 			
-			function updateTable2() {
+			function updateTable2(geneSetNameValue) {
 				$('#table2').hide();
 				$("#table2waiting").show();
-				var geneSetNameValue = document.getElementById("selctedLeafName").innerHTML;
+				//var geneSetNameValue = document.getElementById("selctedLeafName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
 				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable2Response);
 			}
@@ -518,14 +523,21 @@
 	<body>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-sm-12">
+				<div class="col-sm-8">
 					<h1>Gene Set Coexpression Network</h1>
+				</div>
+				<div class="col-sm-4" id="menu">
+					<ul>
+						<li class="first"><a href="index.html" accesskey="1" title="">Home</a></li>
+						<li><a href="news.html" accesskey="2" title="">News</a></li>
+						<li><a href="about.html" accesskey="3" title="">About</a></li>						
+						<li><a href="contacts.html" accesskey="4" title="">Contacts</a></li>			
+					</ul>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
-					<h2>Explore PCxN</h2>
-					<form id="form2" class="well">						
+					<form id="form2" class="well pcxnInput">						
 						<label for="inputTopN2">Find top</label>
 						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
 						<label>Correlated with</label><br>						
@@ -555,16 +567,13 @@
 						
 						<input type="reset" id="button4" value=" Reset "/>												
 						<input type="button" id="button3" value=" GO " onclick="javascript:sendForm2();"/>
-
 					</form>
-				</div>
-				<div class="col-sm-6">
-					<h2>Analyze Multiple Gene Sets</h2>
-					<form id="form1" class="well">
-						<label for="upgenesets">Find partial correlation between up-regulated gene sets</label><br>
+					
+					<form id="form1" class="well pcxnInput">
+						<label for="upgenesets">Find partial correlation among gene sets up-regulated in phenotype 0</label><br>
 						<textarea rows="7" cols="50" id="upgenesets"></textarea><br>
 						
-						<label for="downgenesets">and down-regulated gene sets </label><br>
+						<label for="downgenesets">and gene sets up-regulated in phenotype 1 </label><br>
 						<textarea rows="7" cols="50" id="downgenesets"></textarea><br>
 						
 						<label for="inputTopN">and top</label>
@@ -573,10 +582,10 @@
 						<label for="inputCorrelation"> with absolute correlation coefficient greater than</label>
 						<input type="text" id="inputCorrelation" value="0.05"/><br>
 						
-						<label for="inputpValue">and p-value less than</label><br>
+						<label for="inputpValue">and p-value less than</label>
 						<input type="text" id="inputpValue" value="0.05"/><br>
 						
-						<label for="selectGeneSetCollection">The gene sets are from</label><br>
+						<label for="selectGeneSetCollection">The gene sets are from</label>
 						<select id="selectGeneSetCollection" size="1">
 							<option value="pathprint">Pathprint</option>
 						    <option value="MSigDBC2CP" selected="selected">MSigDB C2 CP (Canonical pathways)</option>
@@ -589,11 +598,14 @@
 						    <option value="complete" selected="selected">Complete linkage</option>
 						    <option value="single">Single linkage</option>
 							<option value="DoNotCluster">Do not cluster</option>
-						</select> 
-												
+						</select> 												
 						<input type="reset" id="button2" value=" Reset "/>
 						<input type="button" id="button1" value=" GO " onclick="javascript:send();"/>
 					</form>
+				</div>
+				<div class="col-sm-6">
+					<h3 class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore PCxN</h3> 
+					<h3 class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</h3>
 				</div>
 			</div>
 			<div class="row">
@@ -601,14 +613,14 @@
                     <!-- The "box" class here is used to find the right DIV when resizing.
                          See sizeCanvas() -->
 					<div class="col-sm-6 box">
-						<h2 class="result">Partial Correlation Heatmap</h2>
+						<h3 class="result">Partial Correlation Heatmap</h3>
                         <!-- This div gets replaced by sizeCanvas() -->
                         <div>
                             <canvas id="canvas1"></canvas>
                         </div>
 					</div>
 					<div class="col-sm-6 box">
-						<h2 class="result">Partial Correlation Network</h2>
+						<h3 class="result">Partial Correlation Network</h3>
                         <div>
                             <canvas id="canvas2"></canvas>
                         </div>
@@ -619,7 +631,7 @@
 				<div class="col-sm-12">
 
 					<div class="col-sm-6">	
-						<h2 class="result">Gene set (click on a gene set name to select)</h2>
+						<h3 class="result">Gene set (click on a gene set name to select)</h3>
 						<h3 class="result">Name</h3>
 						<p id="selctedLeafName" class="result"> </p>
 						<h3 class="result">External links</h3>
@@ -646,36 +658,13 @@
 					</div>
 					<div class="col-sm-6">
 						<canvas id="canvas3" class="result" width="450" height="300"></canvas>
-						<h2 class="result">Gene set (click on a node to select)</h2>
-						<h3 class="result">Name</h3>
-						<p id="selctedNodeName" class="result"> </p>
-						<h3 class="result">External links</h3>
-						<a  class="result" id="selctedNodeNameLink" target="_blank" href=""></a>
-						<h3 class="result">Members on HG-U133 Plus2 array</h3>
-						<table id="table3" class="display" cellspacing="0" width="100%">
-							<thead>
-								<tr>
-									<th>GeneID</th>
-									<th>Symbol</th>
-									<th>Description</th>
-								</tr>
-							</thead>
-							<tfoot>
-								<tr>
-									<th>GeneID</th>
-									<th>Symbol</th>
-									<th>Description</th>
-								</tr>
-							</tfoot>
-						</table>
-						<p id="table3waiting" class="waitmessage">Please wait. Getting data ....</p>
 					</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="col-sm-12">
-						<h2 class="result">Partial Correlation Table</h2>
+						<h3 class="result">Partial Correlation Table</h3>
 						<div class="col-sm-12">
 							<table id="table1" class="display" cellspacing="0" width="100%">
 								<thead>
@@ -728,6 +717,26 @@
 		document.getElementById("selectPathprint").addEventListener("change", changeRadioSelection);
 		document.getElementById("selectMSigDBC2CP").addEventListener("change", changeRadioSelection);
 		document.getElementById("selectMSigDBC5").addEventListener("change", changeRadioSelection);	
+		
+		function radioAnalysisClick (e) {
+			if (e.target.id == "radioAnalysis1") {
+				$("#form1").hide();
+				$(".result").hide();
+				$(".display").hide();
+				$(".waitmessage").hide();
+				$("#form2").show();			
+			} else if (e.target.id == "radioAnalysis2") {
+				$("#form2").hide();
+				$(".result").hide();
+				$(".display").hide();
+				$(".waitmessage").hide();
+				$("#form1").show();	
+			} else {
+				alert("Error. Please contact W.Wei@sheffield.ac.uk");
+			}
+		}		
+		document.getElementById("radioAnalysis1").addEventListener("click", radioAnalysisClick);
+		document.getElementById("radioAnalysis2").addEventListener("click", radioAnalysisClick);
 	</script>
 	</body>
 </html>
