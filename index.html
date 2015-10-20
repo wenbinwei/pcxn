@@ -558,8 +558,7 @@
 						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="searchGeneSet">Search a gene set 
 						<input id="textfieldGeneSet" onkeypress="hideOpetionsAndResults()">																
 						<br>																	
-						<br><br><br><br><br><br><br>
-						<label id="label1" for="inputCorrelation2"> with absolute correlation coefficient greater than</label>
+						<label id="label1" for="inputCorrelation2"> with absolute correlation coefficient greater than</label><br>
 						<input type="text" id="inputCorrelation2" value="0.05"/><br>
 						
 						<label id="label2" for="inputpValue2">and p-value less than</label><br>
@@ -604,8 +603,8 @@
 					</form>
 				</div>
 				<div class="col-sm-6">
-					<h3 class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore PCxN</h3> 
-					<h3 class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</h3>
+					<label class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore PCxN</label><br>
+					<label class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</label>
 				</div>
 			</div>
 			<div class="row">
@@ -703,15 +702,16 @@
 			} else if(e.target.id =="selectMSigDBC5") {
 				document.getElementById("radioMSigDBC5").checked = true;
 			} else {}
-		}
-		function geneSetSearchCompleted (e, ui){
-			$('#radioSearchGeneSet').prop('checked', true);
 			$("#label1").show();
 			$("#inputCorrelation2").show();
 			$("#label2").show();
 			$("#inputpValue2").show();
 			$("#button4").show();
 			$("#button3").show();
+		}
+		function geneSetSearchCompleted (e, ui){
+			$('#radioSearchGeneSet').prop('checked', true);
+			showForm2LowerPart();
 		}				
 		$( "#textfieldGeneSet" ).on( "autocompleteselect", geneSetSearchCompleted);
 		document.getElementById("selectPathprint").addEventListener("change", changeRadioSelection);
@@ -734,9 +734,26 @@
 			} else {
 				alert("Error. Please contact W.Wei@sheffield.ac.uk");
 			}
-		}		
+		}
+		
+		function form2RadioClick (e) {
+			showForm2LowerPart();			
+		}	
+		
+		function showForm2LowerPart () {
+			$("#label1").show();
+			$("#inputCorrelation2").show();
+			$("#label2").show();
+			$("#inputpValue2").show();
+			$("#button4").show();
+			$("#button3").show();
+		}	
 		document.getElementById("radioAnalysis1").addEventListener("click", radioAnalysisClick);
 		document.getElementById("radioAnalysis2").addEventListener("click", radioAnalysisClick);
+		document.getElementById("radioPathprint").addEventListener("click", form2RadioClick);
+		document.getElementById("radioMSigDBC2CP").addEventListener("click", form2RadioClick);
+		document.getElementById("radioMSigDBC5").addEventListener("click", form2RadioClick);
+		document.getElementById("radioSearchGeneSet").addEventListener("click", form2RadioClick);
 	</script>
 	</body>
 </html>
