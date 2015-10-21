@@ -15,11 +15,8 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
                 sizeCanvas()
-				//$(".result").show();
 				$("#form1").hide();
-				$(".result").hide();
-				$(".display").hide();
-				$(".waitmessage").hide();
+				$("#divResult").find('*').hide();
     			var parms = {geneSetCollection :"all"};
 				$.getJSON("/pcxn/getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
@@ -142,10 +139,8 @@
 					alert(alertMessage);
 					return;
 				}
-				$(".pcxnInput").hide();
-				//$("#form1").hide();
-				//$("#form2").hide();
-				$(".result").show();
+				$("#divInput").find('*').hide();
+				$("#divResult").find('*').show();
 				//alert(form1Response[0]);
 				//alert(form1Response[0][0]);
 				outputGenesetNames.sort();
@@ -398,9 +393,7 @@
 					pCutOffValue = newPCutOffValue;
 					corrCutOffValue = newCorrCutOffValue;
 					geneSetCollectionValue = newGeneSetCollectionValue;
-					$(".result").hide();
-					$(".display").hide();
-					$(".waitmessage").hide();
+					$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
 					$.getJSON("/pcxn/getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
@@ -502,9 +495,7 @@
 			};
 			
 			function hideOpetionsAndResults() {			
-				$(".result").hide();
-				$(".display").hide();
-				$(".waitmessage").hide();
+				$("#divResult").find('*').hide();
 				$("#label1").hide();
 				$("#inputCorrelation2").hide();
 				$("#label2").hide();
@@ -535,9 +526,9 @@
 					</ul>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row" id="divInput">
 				<div class="col-sm-6">
-					<form id="form2" class="well pcxnInput">						
+					<form id="form2" class="well">						
 						<label for="inputTopN2">Find top</label>
 						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
 						<label>Correlated with</label><br>						
@@ -568,7 +559,7 @@
 						<input type="button" id="button3" value=" GO " onclick="javascript:sendForm2();"/>
 					</form>
 					
-					<form id="form1" class="well pcxnInput">
+					<form id="form1" class="well">
 						<label for="upgenesets">Find partial correlation among gene sets up-regulated in phenotype 0</label><br>
 						<textarea rows="7" cols="50" id="upgenesets"></textarea><br>
 						
@@ -603,39 +594,40 @@
 					</form>
 				</div>
 				<div class="col-sm-6">
-					<label class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore PCxN</label><br>
-					<label class="pcxnInput"><input type="radio" class="pcxnInput" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</label>
+					<label><input type="radio" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore PCxN</label><br>
+					<label><input type="radio" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</label>
 				</div>
 			</div>
-			<div class="row">
+			<div id="divResult">
+				<div class="row">
 				<div class="col-sm-12">
                     <!-- The "box" class here is used to find the right DIV when resizing.
                          See sizeCanvas() -->
 					<div class="col-sm-6 box">
-						<h3 class="result">Partial Correlation Heatmap</h3>
+						<h3>Partial Correlation Heatmap</h3>
                         <!-- This div gets replaced by sizeCanvas() -->
                         <div>
                             <canvas id="canvas1"></canvas>
                         </div>
 					</div>
 					<div class="col-sm-6 box">
-						<h3 class="result">Partial Correlation Network</h3>
+						<h3>Partial Correlation Network</h3>
                         <div>
                             <canvas id="canvas2"></canvas>
                         </div>
 					</div>
 				</div>
 			</div>
-			<div class="row">
+				<div class="row">
 				<div class="col-sm-12">
 
 					<div class="col-sm-6">	
-						<h3 class="result">Gene set (click on a gene set name to select)</h3>
-						<h3 class="result">Name</h3>
-						<p id="selctedLeafName" class="result"> </p>
-						<h3 class="result">External links</h3>
-						<a  class="result" id="selctedLeafNameLink" target="_blank" href=""></a>
-						<h3 class="result">Members on HG-U133 Plus2 array</h3>
+						<h3>Gene set (click on a gene set name to select)</h3>
+						<h3>Name</h3>
+						<p id="selctedLeafName"> </p>
+						<h3>External links</h3>
+						<a id="selctedLeafNameLink" target="_blank" href=""></a>
+						<h3>Members on HG-U133 Plus2 array</h3>
 						<table id="table2" class="display" cellspacing="0" width="100%">
 							<thead>
 								<tr>
@@ -656,14 +648,26 @@
 						<p id="table2waiting" class="waitmessage">Please wait. Getting data ....</p>
 					</div>
 					<div class="col-sm-6">
-						<canvas id="canvas3" class="result" width="450" height="300"></canvas>
+						<div class="span6">
+                    		<label for="amount">Minimum absolute correlation coefficient:
+                    		<input disabled=true size="3" type="text" id="amount" style="border:0; margin-bottom:0; width: 50px" /></label>
+                    		<input size="3" type="range" id="amount2" min="0.01" max="1" step="0.01"style="width: 350px"/>
+                    		<div id="slider-edge" style="margin-botton: 5px"></div>
+                    	</div>
+                		<div class="span6">
+                    		<label for="nodesSlide">Maximum number of gene sets:
+                    		<input disabled=true size="3" type="text" id="nodesSlide" style="border:0; margin-bottom:0; width: 50px" /></label>
+                    		<input size="3" type="range" id="nodesSlide2" min="1" max="50" step="1" style="width: 350px"/>
+                    		<div id="slider-node"></div>
+                			</div>
+						<canvas id="canvas3" width="450" height="300"></canvas>
 					</div>
 				</div>
 			</div>
-			<div class="row">
+				<div class="row">
 				<div class="col-sm-12">
 					<div class="col-sm-12">
-						<h3 class="result">Partial Correlation Table</h3>
+						<h3>Partial Correlation Table</h3>
 						<div class="col-sm-12">
 							<table id="table1" class="display" cellspacing="0" width="100%">
 								<thead>
@@ -689,6 +693,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</div>
 	<script>
@@ -721,15 +726,11 @@
 		function radioAnalysisClick (e) {
 			if (e.target.id == "radioAnalysis1") {
 				$("#form1").hide();
-				$(".result").hide();
-				$(".display").hide();
-				$(".waitmessage").hide();
+				$("#divResult").find('*').hide();
 				$("#form2").show();			
 			} else if (e.target.id == "radioAnalysis2") {
 				$("#form2").hide();
-				$(".result").hide();
-				$(".display").hide();
-				$(".waitmessage").hide();
+				$("#divResult").find('*').hide();
 				$("#form1").show();	
 			} else {
 				alert("Error. Please contact W.Wei@sheffield.ac.uk");
