@@ -14,9 +14,9 @@
 
 		<script type="text/javascript">
 			$(document).ready(function(){
-                sizeCanvas()
+                sizeCanvas();
 				$("#form1").hide();
-				$("#divResult").find('*').hide();
+				$(".result").hide();
     			var parms = {geneSetCollection :"all"};
 				$.getJSON("/pcxn/getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
@@ -47,14 +47,25 @@
                 var newCanvas = $newCanvas[0]
                 newCanvas.style.width = '100%'
                 newCanvas.style.height = '100%'
-                newCanvas.width = box.offsetWidth - 15
+                newCanvas.width = box.offsetWidth - 30;
                 console.log("fit", id, newCanvas.width)
                 newCanvas.height = newCanvas.width
             }
 
             function sizeCanvas() {
-                makeCanvasFitBoxContainer('#canvas1')
-                makeCanvasFitBoxContainer('#canvas2')
+            	if (document.getElementById("checkboxHeatmap").checked) {
+                	makeCanvasFitBoxContainer('#canvas1');
+                	$("#divHeatmap").parents().show();
+                	$("#divHeatmap").show();
+                	$("#divHeatmap").children().show();
+                }
+                if (document.getElementById("checkboxNetwork").checked) {
+                	makeCanvasFitBoxContainer('#canvas2');
+                	$("#netWorkHeadLabel").parents().show();
+                	$("#netWorkHeadLabel").show();
+                	$("#divSlides").parents().show();
+                	$("#divSlides").children().show();
+                }
             }
 
 			function handleAvailableGeneSetsResponse (response) {
@@ -141,8 +152,9 @@
 					alert(alertMessage);
 					return;
 				}
-				$("#divInput").find('*').hide();
-				$("#divResult").find('*').show();
+				
+				displayResults ();				
+				//$("#table2waiting").hide();
 				//alert(form1Response[0]);
 				//alert(form1Response[0][0]);
 				outputGenesetNames.sort();
@@ -169,7 +181,8 @@
 					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
 				}
 
-                sizeCanvas()
+                sizeCanvas();
+                //$(window).resize();
 				
 				var cnv4=document.getElementById('canvas1');
 				var ctx4=cnv4.getContext('2d');
@@ -193,8 +206,8 @@
 							"maxSmpStringLen" : 20,
 							"maxVarStringLen": 20,
 							"autoScaleFont" : false,
-							"varLabelFontSize" : 14,
-							"smpLabelFontSize" : 14,
+							"varLabelFontSize" : 10,
+							"smpLabelFontSize" : 10,
 							"minTextSize" : 12,
 							"title": "",
 							"disableMenu" : true,
@@ -245,22 +258,7 @@
 				
 				//network
 				var nodes = [];
-				
-				for(var i = 0; i < outputGenesetNames.length; ++i){
-                    var newNode
-					if($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0) ) {
-                        // Member of the up-regulated geneset
-						newNode = {"id": outputGenesetNames[i], "color" : "rgb(200,200,200)", "shape" : "sphere"};
-					} else if($("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
-                        // Member of the down-regulated geneset
-						newNode = {"id": outputGenesetNames[i], "color" : "rgb(55,55,55)", "shape" : "sphere"};
-					}
-					else {
-						newNode = {"id": outputGenesetNames[i], "color" : "rgb(100,100,100)", "shape" : "sphere", "size": "0.5"};
-					}
-					nodes.push(newNode)
-				}
-				
+				var inNetwork ={};				
 				var tableData = new Array();
 				var edges = new Array();
 				var edgeIndex = 0;
@@ -287,11 +285,35 @@
 									"width" : lineWidth,
 									"value": partialCor};
 						}
+						
+						if(!inNetwork.hasOwnProperty(form1Response[k][0])) {
+							inNetwork[form1Response[k][0]] = 1;
+						}
+						
+						if(!inNetwork.hasOwnProperty(form1Response[k][1])) {
+							inNetwork[form1Response[k][1]] = 1;
+						}
 						edgeIndex++;
 					}					
 				}
 				//console.log(nodes);
 				//console.log(edges);
+				for(var i = 0; i < outputGenesetNames.length; ++i){
+					if (inNetwork.hasOwnProperty(outputGenesetNames[i])) {
+                    	var newNode
+						if($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0) ) {
+                        	// Member of the up-regulated geneset
+							newNode = {"id": outputGenesetNames[i], "color" : "rgb(200,200,200)", "shape" : "sphere"};
+						} else if($("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
+                        	// Member of the down-regulated geneset
+							newNode = {"id": outputGenesetNames[i], "color" : "rgb(55,55,55)", "shape" : "sphere"};
+						}
+						else {
+							newNode = {"id": outputGenesetNames[i], "color" : "rgb(100,100,100)", "shape" : "sphere", "size": "0.5"};
+						}
+						nodes.push(newNode)
+					}
+				}
 				
 				$("#table1").show();
 				var t = $('#table1').DataTable({
@@ -327,12 +349,15 @@
 						"disableMenu" : true,
 						"disableToolbar" : true,
 						"resizable" : false,
-						"nodeFontSize" : 7
+						"nodeFontSize" : 10
 					},
 					{
 						'click' : function(o, e, t) {
 							var eventDataId = t.getEventDataId(e);
 							var selctedGeneSetName = t.data.nodes[eventDataId].id;
+							$("#divGeneList").parents().show();
+							$("#divGeneList").show();
+							$("#divGeneList").children().show();
 							document.getElementById("selctedLeafName").innerHTML = selctedGeneSetName;
 							var htmlLink = "";
 							if (geneSetCollectionValue.match(/MSigDB/)) {
@@ -397,7 +422,8 @@
 					pCutOffValue = newPCutOffValue;
 					corrCutOffValue = newCorrCutOffValue;
 					geneSetCollectionValue = newGeneSetCollectionValue;
-					$("#divResult").find('*').hide();
+					$(".result").hide();
+					//$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
 					$.getJSON("/pcxn/getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
@@ -441,6 +467,7 @@
 			function updateTable2(geneSetNameValue) {
 				$('#table2').hide();
 				$("#table2waiting").show();
+				$("#checkboxGeneList").prop('checked', true);
 				//var geneSetNameValue = document.getElementById("selctedLeafName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
 				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable2Response);
@@ -498,7 +525,9 @@
 				handleForm1Response(form1Response);
 			};
 			
-			function hideOpetionsAndResults() {			
+			function hideOptionsAndResults() {
+				$(".result").hide();
+				$(".result").find('*').hide();
 				$("#divResult").find('*').hide();
 				$("#label1").hide();
 				$("#inputCorrelation2").hide();
@@ -517,7 +546,7 @@
 	</head>
 	<body>
 		<div class="container-fluid">
-			<div class="row">
+			<div class="row" id="divHeader">
 				<div class="col-sm-8">
 					<h1>Gene Set Coexpression Network</h1>
 				</div>
@@ -551,7 +580,7 @@
 						
 						<br>
 						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="searchGeneSet">Search a gene set 
-						<input id="textfieldGeneSet" onkeypress="hideOpetionsAndResults()">																
+						<input id="textfieldGeneSet" onkeypress="hideOptionsAndResults()">																
 						<br>																	
 						<label id="label1" for="inputCorrelation2"> with absolute correlation coefficient greater than</label><br>
 						<input type="text" id="inputCorrelation2" value="0.05"/><br>
@@ -602,36 +631,57 @@
 					<label><input type="radio" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</label>
 				</div>
 			</div>
-			<div id="divResult">
-				<div class="row">
-				<div class="col-sm-12">
+			<div class="row" id="divResult">
+				<div class="row result">
+					<div class="col-sm-12 result">
+						<div class="col-sm-12 result" id="menu2">
+						<label class="result">Show</label>
+						<input class="result" type="checkbox" id="checkboxHeatmap" checked="checked">heatmap
+						<input class="result" type="checkbox" id="checkboxNetwork">network					
+						<input class="result" type="checkbox" id="checkboxNetworkLegend">network legend
+						<input class="result" type="checkbox" id="checkboxGeneList">gene list
+						<input class="result" type="checkbox" id="checkboxCorrelationTable">Correlation table				
+					</div>
+					</div>
+				</div>
+				<div class="row result">
+					<div class="col-sm-12">
                     <!-- The "box" class here is used to find the right DIV when resizing.
                          See sizeCanvas() -->
-					<div class="col-sm-6 box">
-						<h3>Partial Correlation Heatmap</h3>
+						<div class="col-sm-6 result box" id="divHeatmap">
+						<label>Partial Correlation Heatmap</label><br>
                         <!-- This div gets replaced by sizeCanvas() -->
                         <div>
                             <canvas id="canvas1"></canvas>
                         </div>
 					</div>
-					<div class="col-sm-6 box">
-						<h3>Partial Correlation Network</h3>
-                        <div>
-                            <canvas id="canvas2"></canvas>
+						<div class="col-sm-6 result row" style="padding-left: 30px;" id="divNetowrk">
+							<label class="result row" id="netWorkHeadLabel" style="padding-left: 15px;">Partial Correlation Network</label>
+							<div class="col-sm-12 row result box">
+                        	<div class="result row">
+                            <canvas class="result" id="canvas2"></canvas>
                         </div>
-					</div>
-				</div>
-			</div>
-				<div class="row">
-				<div class="col-sm-12">
-
-					<div class="col-sm-6">	
-						<h3>Gene set (click on a gene set name to select)</h3>
-						<h3>Name</h3>
-						<p id="selctedLeafName"> </p>
-						<h3>External links</h3>
+                        </div>
+                        	<div class="col-sm-12 result row" id="divSlides">
+                        	<div class="col-sm-12 row result">
+								<div class="col-sm-12 row result">
+                    			<label class="result" for="amount" style="width: 180px">Min absolute correlation:</label>
+                    			<input class="result" size="3" type="range" id="coefficientSlide" min="0.01" max="1" step="0.01" style="width: 150px; display: inline"/>
+                    			<input class="result" disabled=true size="3" type="text" id="coefficientText" style="border:0; margin-bottom:0; width: 50px" />
+                    			<label class="result" for="pvalueSlide" style="width: 180px">Max correlation p value:</label>
+                    			<input class="result" size="3" type="range" id="pvalueSlide" min="0.001" max="0.05" step="0.001" style="width: 150px; display: inline"/>
+                    			<input class="result" disabled=true size="3" type="text" id="pvalueText" style="border:0; margin-bottom:0; width: 50px" />   		
+                			</div>
+                			</div>
+                		</div>                		
+						</div>										
+						<div class="col-sm-6 result row" id="divGeneList" style="padding-left: 30px;">	
+						<label class="result">Gene set (click on a gene set name on heatmap or network to select)</label><br>
+						<label class="result">Name</label><br>
+						<p class="result" id="selctedLeafName"> </p>
+						<label>External links</label><br>
 						<a id="selctedLeafNameLink" target="_blank" href=""></a>
-						<h3>Members on HG-U133 Plus2 array</h3>
+						<label>Members on HG-U133 Plus2 array</label><br>
 						<table id="table2" class="display" cellspacing="0" width="100%">
 							<thead>
 								<tr>
@@ -650,57 +700,45 @@
 							</tfoot>
 						</table>
 						<p id="table2waiting" class="waitmessage">Please wait. Getting data ....</p>
-					</div>
-					<div class="col-sm-6">
-						<div class="span6">
-                    		<label for="amount">Minimum absolute correlation coefficient:
-                    		<input disabled=true size="3" type="text" id="coefficientText" style="border:0; margin-bottom:0; width: 50px" /></label>
-                    		<input size="3" type="range" id="coefficientSlide" min="0.01" max="1" step="0.01"style="width: 350px"/>
-                    		<div id="slider-edge" style="margin-botton: 5px"></div>
-                    	</div>
-                		<div class="span6">
-                    		<label for="pvalueSlide">Maximum correlation p value:
-                    		<input disabled=true size="3" type="text" id="pvalueText" style="border:0; margin-bottom:0; width: 50px" /></label>
-                    		<input size="3" type="range" id="pvalueSlide" min="0.000001" max="0.05" step="0.001" style="width: 350px"/>
-                    		<div id="slider-node"></div>
-                		</div>
+					</div>					
+						<div class="col-sm-6 result row" id="divLegend">						
 						<canvas id="canvas3" width="450" height="300"></canvas>
+					</div>				
 					</div>
-				</div>
-			</div>
-				<div class="row">
-				<div class="col-sm-12">
-					<div class="col-sm-12">
-						<h3>Partial Correlation Table</h3>
-						<div class="col-sm-12">
-							<table id="table1" class="display" cellspacing="0" width="100%">
-								<thead>
-									<tr>
-										<th>Gene Set A</th>
-										<th>Gene Set B</th>
-										<th>Partial Correlation</th>
-										<th>p Value</th>
-										<th>Overlap Coefficient</th>
-									</tr>
-								</thead>
+				</div>				
+				<div class="row result" id="divTable1">
+					<div class="col-sm-12 result">
+						<div class="col-sm-12 result">
+							<h3 class="result" >Partial Correlation Table</h3>
+							<div class="col-sm-12 result">
+								<table id="table1" class="display result" cellspacing="0" width="100%">
+									<thead class="result">
+										<tr class="result">
+											<th class="result">Gene Set A</th>
+											<th class="result">Gene Set B</th>
+											<th class="result">Partial Correlation</th>
+											<th class="result">p Value</th>
+											<th class="result">Overlap Coefficient</th>
+										</tr>
+									</thead>
 
-								<tfoot>
-									<tr>
-										<th>Gene Set A</th>
-										<th>Gene Set B</th>
-										<th>Partial Correlation</th>
-										<th>p Value</th>
-										<th>Overlap Coefficient</th>
-									</tr>
-								</tfoot>
-							</table>
+									<tfoot class="result">
+										<tr class="result">
+											<th class="result">Gene Set A</th>
+											<th class="result">Gene Set B</th>
+											<th class="result">Partial Correlation</th>
+											<th class="result">p Value</th>
+											<th class="result">Overlap Coefficient</th>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			</div>
 		</div>
-	<script>
+		<script>
 		function changeRadioSelection (e){
 			//$('#radioSelectGeneSet').prop('checked', true);
 			//alert(e.target.id);
@@ -730,15 +768,14 @@
 		function radioAnalysisClick (e) {
 			if (e.target.id == "radioAnalysis1") {
 				$("#form1").hide();
-				$("#divResult").find('*').hide();
 				$("#form2").show();			
 			} else if (e.target.id == "radioAnalysis2") {
 				$("#form2").hide();
-				$("#divResult").find('*').hide();
 				$("#form1").show();	
 			} else {
 				alert("Error. Please contact W.Wei@sheffield.ac.uk");
 			}
+			$(".result").hide();
 		}
 		
 		function form2RadioClick (e) {
@@ -752,6 +789,7 @@
 			$("#inputpValue2").show();
 			$("#button4").show();
 			$("#button3").show();
+			$(".ui-helper-hidden-accessible").hide();	
 		}	
 		document.getElementById("radioAnalysis1").addEventListener("click", radioAnalysisClick);
 		document.getElementById("radioAnalysis2").addEventListener("click", radioAnalysisClick);
@@ -766,7 +804,9 @@
 				return;
 			}
 			$("#inputCorrelation").val($("#coefficientSlide").val());
-			javascript:send();			
+			//javascript:send();
+			corrCutOffValue = $("#coefficientSlide").val();
+			handleForm1Response(form1Response);				
 		}
 		
 		function coefficientSlideInput (e) {
@@ -778,7 +818,9 @@
 				alert("None of the edges in the network has correlation p value < " + $("#pvalueSlide").val()) ;
 			}
 			$("#inputpValue").val($("#pvalueSlide").val());				
-			javascript:send();			
+			//javascript:send();
+			pCutOffValue =$("#pvalueSlide").val();
+			handleForm1Response(form1Response);				
 		}
 		
 		function pvalueSlideInput (e) {
@@ -788,6 +830,81 @@
 		document.getElementById("coefficientSlide").addEventListener("input", coefficientSlideInput);
 		document.getElementById("pvalueSlide").addEventListener("change", pvalueSlideChange);
 		document.getElementById("pvalueSlide").addEventListener("input", pvalueSlideInput);
+		
+		function displayResults (){
+			$("#divInput").find('*').hide();
+			$("#divInput").hide();
+			$(".result").show();
+				
+			if (document.getElementById("checkboxHeatmap").checked) {
+				$("#divHeatmap").parents().show();
+				$("#divHeatmap").show();
+				$("#divHeatmap").children().show();
+			} else {
+				$("#divHeatmap").children().hide();
+				$("#divHeatmap").hide();
+			}
+				
+			if (document.getElementById("checkboxNetwork").checked) {
+				$("#divNetowrk").parents().show();
+				$("#divNetowrk").show();
+				$("#divNetowrk").children().show();
+				$("#netWorkHeadLabel").show();				
+				$("#canvas2").show();
+				$("#divSlides").show();
+				$("#divSlides").children().show();			
+			} else {
+				$("#divNetowrk").find('*').hide();
+				$("#divNetowrk").hide();
+				$("#divSlides").hide();
+				$("#divSlides").children().hide();
+			}
+								
+			if (document.getElementById("checkboxGeneList").checked) {
+				$("#divGeneList").parents().show();
+				$("#divGeneList").show();
+				$("#divGeneList").children().show();
+				$("#table2waiting").hide();				
+			} else {
+				$("#divGeneList").children().hide();
+				$("#divGeneList").hide();
+			}
+						
+			if (document.getElementById("checkboxNetworkLegend").checked) {
+				$("#divLegend").parents().show();
+				$("#divLegend").show();
+				$("#divLegend").children().show();
+			} else {
+				$("#divLegend").children().hide();
+				$("#divLegend").hide();
+			}
+			
+			if (document.getElementById("checkboxCorrelationTable").checked) {
+				$("#divTable1").parents().show();
+				$("#divTable1").show();
+				$("#divTable1").children().show();
+			} else {
+				$("#divTable1").children().hide();
+				$("#divTable1").hide();
+			}
+		}
+		
+		function checkboxNetworkClick (e) {
+			if (document.getElementById("checkboxNetwork").checked) {
+				handleForm1Response(form1Response);			
+			} else {
+				$("#divNetowrk").children().hide();
+				$("#divNetowrk").hide();
+				$("#divSlides").children().hide();
+				$("#divSlides").hide();
+			}
+		}
+		
+		document.getElementById("checkboxHeatmap").addEventListener("click", displayResults);
+		document.getElementById("checkboxNetwork").addEventListener("click", checkboxNetworkClick);
+		document.getElementById("checkboxNetworkLegend").addEventListener("click", displayResults);
+		document.getElementById("checkboxGeneList").addEventListener("click", displayResults);
+		document.getElementById("checkboxCorrelationTable").addEventListener("click", displayResults);
 	</script>
 	</body>
 </html>
