@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Gene Set Coexpression Network</title>
+		<title>PCxN</title>
 		<script src="http://canvasxpress.org/js/canvasXpress.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.css">
 		<script type="text/javascript" language="javascript" src="/js/jquery-2.1.1.min.js"></script>
@@ -81,6 +81,10 @@
     			});
     			
     			pathprintGeneSets = pathprintGeneSets.sort();
+    			$('#selectPathprint')
+         			.append($("<option></option>")
+         			.attr("value","")
+         			.text(""));
     			for(var i = 0; i < pathprintGeneSets.length; ++i){
 					$('#selectPathprint')
          				.append($("<option></option>")
@@ -89,6 +93,10 @@
 				}
 				
 				mSigDBC2CPGeneSets = mSigDBC2CPGeneSets.sort();
+				$('#selectMSigDBC2CP')
+         			.append($("<option></option>")
+         			.attr("value","")
+         			.text("")); 
     			for(var i = 0; i < mSigDBC2CPGeneSets.length; ++i){
 					$('#selectMSigDBC2CP')
          				.append($("<option></option>")
@@ -97,6 +105,10 @@
 				} 
 				
 				mSigDBC5GeneSets = mSigDBC5GeneSets.sort();
+				$('#selectMSigDBC5')
+         			.append($("<option></option>")
+         			.attr("value","")
+         			.text("")); 
     			for(var i = 0; i < mSigDBC5GeneSets.length; ++i){
 					$('#selectMSigDBC5')
          				.append($("<option></option>")
@@ -374,15 +386,113 @@
 				
 				var cnv=document.getElementById('canvas3');
 				var ctx = cnv.getContext('2d');
-				var pict = new Image();				
-				if( topNValue > 0) {
-					pict.src = "/pcxn/pcxn-legend1.png";
-				} else {
-					pict.src = "/pcxn/pcxn-legend2.png";
-				}
-				pict.onload = function (){
-					ctx.clearRect(0, 0, canvas3.width, canvas3.height);
-					ctx.drawImage(pict, 10, 10, pict.width*1, pict.height*1);
+				ctx.clearRect(0, 0, canvas3.width, canvas3.height);
+				ctx.font = '20px "times new roman"';
+				var heightOffset = 45;
+				ctx.fillStyle='black';
+				ctx.fillText("Network legend", 20, 45);
+				if ((upGenesetNames.length + downGenesetNames)==1){					
+					ctx.strokeStyle = "rgb(100,100,100)";
+					ctx.fillStyle="rgb(100,100,100)";
+					ctx.beginPath();
+					ctx.arc(35, 87.5+heightOffset, 15/2, 0, Math.PI*2, false);
+					ctx.fill();
+					ctx.stroke();
+					ctx.strokeStyle = "rgb(200,200,200)";
+					ctx.fillStyle="rgb(200,200,200)"; 
+					ctx.beginPath();
+					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.fill();
+					ctx.stroke();
+					ctx.strokeStyle = 'red';
+					ctx.lineWidth = '3';
+					ctx.beginPath();
+					ctx.moveTo(20, 130+heightOffset);
+					ctx.lineTo(105, 130+heightOffset);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.strokeStyle = 'blue'
+					ctx.moveTo(20, 175+heightOffset);
+					ctx.lineTo(105, 175+heightOffset);
+					ctx.stroke();
+					ctx.font = '20px "times new roman"';
+					ctx.fillStyle='black';
+					ctx.fillText("Query gene sets", 120, 50+heightOffset);
+					ctx.fillText("Other gene sets", 120, 95+heightOffset);
+					ctx.fillStyle='red';
+					ctx.fillText("Positive correlation", 120, 140+heightOffset);
+					ctx.fillStyle='blue';
+					ctx.fillText("Negative correlation", 120, 185+heightOffset);
+				} else	if( topNValue > 0) {
+					ctx.strokeStyle = "rgb(55,55,55)";
+					ctx.fillStyle="rgb(55,55,55)";
+					ctx.beginPath();
+					ctx.arc(35, 87.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.fill();
+					ctx.stroke();
+					ctx.strokeStyle = "rgb(200,200,200)";
+					ctx.fillStyle="rgb(200,200,200)"; 
+					ctx.beginPath();
+					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.fill();
+					ctx.stroke();
+					ctx.strokeStyle = 'red';
+					ctx.lineWidth = '3';
+					ctx.beginPath();
+					ctx.moveTo(20, 175+heightOffset);
+					ctx.lineTo(105, 175+heightOffset);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.strokeStyle = 'blue'
+					ctx.moveTo(20, 220+heightOffset);
+					ctx.lineTo(105, 220+heightOffset);
+					ctx.stroke();
+					ctx.fillStyle='black';
+					ctx.fillText("Gene sets up-regulated in phenotype 0", 120, 50+heightOffset);
+					ctx.fillText("Gene sets up-regulated in phenotype 1", 120, 95+heightOffset);
+					ctx.fillText("Other gene sets", 120, 135+heightOffset);
+					ctx.fillStyle='red';
+					ctx.fillText("Positive correlation", 120, 185+heightOffset);
+					ctx.fillStyle='blue';
+					ctx.fillText("Negative correlation", 120, 230+heightOffset);			
+					ctx.fillStyle="rgb(100,100,100)";
+					ctx.strokeStyle="rgb(100,100,100)";
+					ctx.beginPath();	
+					ctx.arc(35, 125+heightOffset, 15/2, 0, Math.PI*2, false);
+					ctx.closePath();
+					ctx.fill();
+					ctx.stroke();
+				} else {					
+					ctx.strokeStyle = "rgb(55,55,55)";
+					ctx.fillStyle="rgb(55,55,55)";
+					ctx.beginPath();
+					ctx.arc(35, 87.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.fill();
+					ctx.stroke();
+					ctx.strokeStyle = "rgb(200,200,200)";
+					ctx.fillStyle="rgb(200,200,200)"; 
+					ctx.beginPath();
+					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.fill();
+					ctx.stroke();
+					ctx.strokeStyle = 'red';
+					ctx.lineWidth = '3';
+					ctx.beginPath();
+					ctx.moveTo(20, 130+heightOffset);
+					ctx.lineTo(105, 130+heightOffset);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.strokeStyle = 'blue'
+					ctx.moveTo(20, 175+heightOffset);
+					ctx.lineTo(105, 175+heightOffset);
+					ctx.stroke();
+					ctx.fillStyle='black';
+					ctx.fillText("Gene sets up-regulated in phenotype 0", 120, 50+heightOffset);
+					ctx.fillText("Gene sets up-regulated in phenotype 1", 120, 95+heightOffset);
+					ctx.fillStyle='red';
+					ctx.fillText("Positive correlation", 120, 140+heightOffset);
+					ctx.fillStyle='blue';
+					ctx.fillText("Negative correlation", 120, 185+heightOffset);
 				}
 			}
 
@@ -460,7 +570,10 @@
 				else if(pathprintGeneSets.indexOf(newGeneSetsValue) >=0) {
 					$("#selectGeneSetCollection").val( "pathprint");
 				}
-				else {alert("Your gene set is not in the database");}
+				else {
+					alert("Your gene set is not in the database");
+					return;
+				}
 				javascript:send();
 			};
 			
@@ -547,16 +660,18 @@
 	<body>
 		<div class="container-fluid">
 			<div class="row" id="divHeader">
-				<div class="col-sm-8">
-					<h1>Gene Set Coexpression Network</h1>
-				</div>
-				<div class="col-sm-4" id="menu">
-					<ul>
-						<li class="first"><a href="index.html" accesskey="1" title="">Home</a></li>
-						<li><a href="news.html" accesskey="2" title="">News</a></li>
-						<li><a href="about.html" accesskey="3" title="">About</a></li>						
-						<li><a href="contacts.html" accesskey="4" title="">Contacts</a></li>			
-					</ul>
+				<div class="col-sm-12">
+					<div class="col-sm-8">
+						<h1><span style="font-size: 1.5em;">PCxN&nbsp</span><span style="font-size: 1em;">The Pathway Co-Activity Map</span></h1>
+					</div>
+					<div class="col-sm-4" id="menu">
+						<ul>
+							<li class="first"><a href="index.html" accesskey="1" title="">Home</a></li>
+							<li><a href="news.html" accesskey="2" title="">News</a></li>
+							<li><a href="about.html" accesskey="3" title="">About</a></li>						
+							<li><a href="contacts.html" accesskey="4" title="">Contacts</a></li>			
+						</ul>
+					</div>
 				</div>
 			</div>
 			<div class="row" id="divInput">
@@ -626,9 +741,28 @@
 						<input type="button" id="button1" value=" GO " onclick="javascript:send();"/>
 					</form>
 				</div>
-				<div class="col-sm-6">
-					<label><input type="radio" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore PCxN</label><br>
-					<label><input type="radio" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze multiple gene sets identified by gene set enrichment analysis</label>
+				<div class="col-sm-6" style="padding-left: 20px;">
+					<div class="col-sm-12" id="divAnalysis1">
+						<h4><input type="radio" id="radioAnalysis1" name="radioAnalysis" value="radioAnalysis1" checked>Explore</h4>
+						<p>Select a single pathway/gene set from one of the three pathway/gene set collections (
+						<a target="_blank" href="http://www.broadinstitute.org/gsea/msigdb/index.jsp">MSigDB</a> C2 Canonical pathways, 
+						<a target="_blank" href="http://www.broadinstitute.org/gsea/msigdb/index.jsp">MSigDB</a> C5 GO gene sets, and 
+						<a target="_blank" href="http://compbio.sph.harvard.edu/hidelab/pathprint/Pathprint.html">Pathprint</a>
+						) and discover its correlated pathway/gene sets within the same pathway/gene set collection.</p>
+					</div>
+					<div class="col-sm-12">
+						<br><br><br>
+					</div>
+					<div class="col-sm-12" id="divAnalysis2">
+						<h4><input type="radio" id="radioAnalysis2" name="radioAnalysis" value="radioAnalysis2">Analyze</h4>
+						<p>Discover correlation relationships among multiple pathways/gene sets identified by 
+						<a target="_blank" href="http://www.broadinstitute.org/gsea/index.jsp">GSEA</a> (gene set enrichment analysis). 
+						All the input pathways/gene sets should come from the same pathway/gene set collection. 
+						<a target="_blank" href="http://www.broadinstitute.org/gsea/msigdb/index.jsp">MSigDB</a>  C2 Canonical pathways, 
+						<a target="_blank" href="http://www.broadinstitute.org/gsea/msigdb/index.jsp">MSigDB</a>  C5 GO gene sets, and 
+						<a target="_blank" href="http://compbio.sph.harvard.edu/hidelab/pathprint/Pathprint.html">Pathprint</a>
+						 are treated as three separate pathway/gene set collections.</p>
+					</div>
 				</div>
 			</div>
 			<div class="row" id="divResult">
@@ -738,6 +872,7 @@
 				</div>
 			</div>
 		</div>
+		<br>
 		<script>
 		function changeRadioSelection (e){
 			//$('#radioSelectGeneSet').prop('checked', true);
