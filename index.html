@@ -802,6 +802,8 @@
                     			<label class="result" for="amount" style="width: 180px">Min absolute correlation:</label>
                     			<input class="result" size="3" type="range" id="coefficientSlide" min="0.01" max="1" step="0.01" style="width: 150px; display: inline"/>
                     			<input class="result" disabled=true size="3" type="text" id="coefficientText" style="border:0; margin-bottom:0; width: 50px" />
+							</div>
+							<div class="col-sm-12 row result">
                     			<label class="result" for="pvalueSlide" style="width: 180px">Max correlation p value:</label>
                     			<input class="result" size="3" type="range" id="pvalueSlide" min="0.001" max="0.05" step="0.001" style="width: 150px; display: inline"/>
                     			<input class="result" disabled=true size="3" type="text" id="pvalueText" style="border:0; margin-bottom:0; width: 50px" />   		
@@ -933,7 +935,8 @@
 		document.getElementById("radioMSigDBC5").addEventListener("click", form2RadioClick);
 		document.getElementById("radioSearchGeneSet").addEventListener("click", form2RadioClick);
 		
-		function coefficientSlideChange (e) {		
+		function coefficientSlideChange (e) {
+			$("#coefficientText").val($("#coefficientSlide").val());
 			if ($("#coefficientSlide").val() > maxCorrInResponse) {
 				alert("None of the edges in the network has absolute correlation coefficient > " + $("#coefficientSlide").val() ) ;
 				return;
@@ -949,6 +952,7 @@
 		}
 		
 		function pvalueSlideChange (e) {
+			$("#pvalueText").val($("#pvalueSlide").val());
 			if ($("#pvalueSlide").val() < minPValueInResponse) {
 				alert("None of the edges in the network has correlation p value < " + $("#pvalueSlide").val()) ;
 			}
