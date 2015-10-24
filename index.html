@@ -50,6 +50,11 @@
                 newCanvas.width = box.offsetWidth - 30;
                 console.log("fit", id, newCanvas.width)
                 newCanvas.height = newCanvas.width
+				if(document.getElementById("checkboxNetwork").checked & 
+				(!document.getElementById("checkboxHeatmap").checked) &
+				(!document.getElementById("checkboxNetworkLegend").checked) &
+				(!document.getElementById("checkboxGeneList").checked)
+				) {newCanvas.width = Math.max(window.innerWidth-60, newCanvas.width*2+100);}
             }
 
             function sizeCanvas() {
@@ -224,7 +229,7 @@
 							"title": "",
 							"disableMenu" : true,
 							"disableToolbar" : true,
-							"resizable" : false
+							"resizable" : true
 					},
 					{
 						'click' : function(o, e, t) {
@@ -360,8 +365,9 @@
 						"showAnimation": true,
 						"disableMenu" : true,
 						"disableToolbar" : true,
-						"resizable" : false,
-						"nodeFontSize" : 10
+						"resizable" : true,
+						"nodeFontSize" : 10,
+						"calculateLayout" :false
 					},
 					{
 						'click' : function(o, e, t) {
