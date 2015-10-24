@@ -122,3 +122,8 @@ textarea {
 {
 	text-decoration: underline;
 }
+
+input[type="range"]::-ms-tooltip {
+	display: none;
+}
+

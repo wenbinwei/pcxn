@@ -938,7 +938,9 @@
 		function coefficientSlideChange (e) {
 			$("#coefficientText").val($("#coefficientSlide").val());
 			if ($("#coefficientSlide").val() > maxCorrInResponse) {
-				alert("None of the edges in the network has absolute correlation coefficient > " + $("#coefficientSlide").val() ) ;
+				alert("None of the edges in the network has absolute correlation coefficient > " + $("#coefficientSlide").val() + ". Notwork has not been changed." ) ;
+				$("#coefficientSlide").val(maxCorrInResponse);
+				$("#coefficientText").val($("#coefficientSlide").val());
 				return;
 			}
 			$("#inputCorrelation").val($("#coefficientSlide").val());
