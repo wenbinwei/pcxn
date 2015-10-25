@@ -50,7 +50,9 @@
 	Connection conn = null;
 	Statement stmt = null;
 	
-	String sql2 = "select * from human_gene_tbl where geneid in (select entrezid from " + tblName + "  where geneset_name = " + geneSetName +")";
+	//String sql2 = "select * from human_gene_tbl where geneid in (select entrezid from " + tblName + "  where geneset_name = " + geneSetName +")";
+	String sql2 = "select human_gene_tbl.* from human_gene_tbl inner join " + tblName + " on geneid=entrezid where geneset_name =" +  geneSetName;
+	
 	//String sql2 = "select * from human_gene_tbl where geneid in (select entrezid from pathprint_geneset_tbl where geneset_name = \"Caffeine metabolism (KEGG)\")";
 	JSONArray matrix = new JSONArray();	
 	try{
