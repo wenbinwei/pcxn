@@ -592,36 +592,16 @@
 				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable2Response);
 			}
 			
-			function updateTable3() {
-				$('#table3').hide();
-				$("#table3waiting").show();
-				var geneSetNameValue = document.getElementById("selctedNodeName").innerHTML;
-				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
-				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable3Response);
-			}
-			
 			function handleTable2Response(response) {
 				var tableData = response;
-				var tableid = '#table2';
-				updateGeneSetTable(tableid, tableData);
-				$("#table2waiting").hide();
-			}
-			
-			function handleTable3Response(response) {
-				var tableData = response;
-				var tableid = '#table3';
-				updateGeneSetTable(tableid, tableData);
-				$("#table3waiting").hide();
-			}
-			
-			function updateGeneSetTable(tableid, tableData) {
+				var tableSelector = '#table2';				
 				for(var k = 0; k < tableData.length; ++k){
 					var entrezid = tableData[k][0];
 					var htmlLink = "http://www.ncbi.nlm.nih.gov/gene/" + entrezid;
 					var el = '<a target="_blank" href=' + htmlLink +">" + entrezid + "</a>";
 					tableData[k][0] = el;				
 				}
-				var t = $(tableid).DataTable({
+				var t = $(tableSelector).DataTable({
 					destroy: true,
 					"columnDefs": [
 						{ className: "dt-body-right", "targets": [ 0 ] },
@@ -636,7 +616,10 @@
 				t.clear();
 				t.rows.add( tableData );
 				t.draw();
-			 	$(tableid).show();
+				$(tableSelector).parents().show();
+			 	$(tableSelector).show();
+			 	$(tableSelector).children().show();
+			 	$("#table2waiting").hide();
 			}
 			
 			function doneResizing() {
