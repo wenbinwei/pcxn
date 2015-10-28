@@ -33,6 +33,8 @@
 			var mSigDBC5GeneSets = [];
 			var maxCorrInResponse = 0;
 			var minPValueInResponse = 1;
+			var minCorrInHeatmap = 0;
+			var maxCorrInHeatmap = 0;
 
             function makeCanvasFitBoxContainer(selector) {
                 // Throw away the canvas element and make a new one.
@@ -196,6 +198,8 @@
 					}
 					partialCorrelationMatrix[indexA][indexB] = form1Response[k][2];
 					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
+					if(form1Response[k][2] < minCorrInHeatmap){minCorrInHeatmap = form1Response[k][2];}
+					if(form1Response[k][2] > maxCorrInHeatmap){maxCorrInHeatmap = form1Response[k][2];}
 				}
 
                 sizeCanvas();
@@ -287,21 +291,14 @@
 					if ( (Math.abs(partialCor) > corrCutOffValue) && (pValue < pCutOffValue) ) {
 						tableData[edgeIndex] = form1Response[k];
 						var lineWidth = Math.abs(10*partialCor) + 1;
-						if (partialCor > 0) {
-							edges[edgeIndex] = {"id1" : form1Response[k][0],
-									"id2" : form1Response[k][1],
-									"color" : "rgba(255,0,0, 0.3)",
-									"type" : "line",
-									"width" : lineWidth,
-									"value": partialCor};
-						} else {
-							edges[edgeIndex] = {"id1" : form1Response[k][0],
-									"id2" : form1Response[k][1],
-									"color" : "rgba(0,0,255, 0.3)",
-									"type" : "line",
-									"width" : lineWidth,
-									"value": partialCor};
-						}
+						edges[edgeIndex] = {"id1" : form1Response[k][0],
+							"id2" : form1Response[k][1],
+							//"color" : "rgba(255,0,0, 0.3)",
+							//"color" : cx4.addColorTransparency(cx4.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor), 0.3),
+							"color" : cx4.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor),
+							"type" : "line",
+							"width" : lineWidth,
+							"value": partialCor};
 						
 						if(!inNetwork.hasOwnProperty(form1Response[k][0])) {
 							inNetwork[form1Response[k][0]] = 1;
@@ -410,25 +407,26 @@
 					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
-					ctx.strokeStyle = 'red';
-					ctx.lineWidth = '3';
-					ctx.beginPath();
-					ctx.moveTo(20, 130+heightOffset);
-					ctx.lineTo(105, 130+heightOffset);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.strokeStyle = 'blue'
-					ctx.moveTo(20, 175+heightOffset);
-					ctx.lineTo(105, 175+heightOffset);
-					ctx.stroke();
 					ctx.font = '20px "times new roman"';
 					ctx.fillStyle='black';
 					ctx.fillText("Query gene sets", 120, 50+heightOffset);
 					ctx.fillText("Other gene sets", 120, 95+heightOffset);
-					ctx.fillStyle='red';
-					ctx.fillText("Positive correlation", 120, 140+heightOffset);
-					ctx.fillStyle='blue';
-					ctx.fillText("Negative correlation", 120, 185+heightOffset);
+					ctx.fillText("Correlation", 160, 135+heightOffset);
+					ctx.font = '15px "times new roman"';
+					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
+					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
+					ctx.lineWidth = '8';
+					var heatmapColors= cx4.heatmapColors;
+					var d=0;
+					var colorWidth = 130/heatmapColors.length;
+					for (var g = 0; g < heatmapColors.length; g++) {						
+						ctx.beginPath();
+						ctx.strokeStyle = heatmapColors[g];
+						ctx.moveTo(20+d, 130+heightOffset);
+						ctx.lineTo(20+colorWidth + d, 130+heightOffset);
+						ctx.stroke();
+						d=d+colorWidth;
+					}
 				} else	if( topNValue > 0) {
 					ctx.strokeStyle = "rgb(55,55,55)";
 					ctx.fillStyle="rgb(55,55,55)";
@@ -442,25 +440,10 @@
 					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
-					ctx.strokeStyle = 'red';
-					ctx.lineWidth = '3';
-					ctx.beginPath();
-					ctx.moveTo(20, 175+heightOffset);
-					ctx.lineTo(105, 175+heightOffset);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.strokeStyle = 'blue'
-					ctx.moveTo(20, 220+heightOffset);
-					ctx.lineTo(105, 220+heightOffset);
-					ctx.stroke();
 					ctx.fillStyle='black';
 					ctx.fillText("Gene sets up-regulated in phenotype 0", 120, 50+heightOffset);
 					ctx.fillText("Gene sets up-regulated in phenotype 1", 120, 95+heightOffset);
-					ctx.fillText("Other gene sets", 120, 135+heightOffset);
-					ctx.fillStyle='red';
-					ctx.fillText("Positive correlation", 120, 185+heightOffset);
-					ctx.fillStyle='blue';
-					ctx.fillText("Negative correlation", 120, 230+heightOffset);			
+					ctx.fillText("Other gene sets", 120, 135+heightOffset);			
 					ctx.fillStyle="rgb(100,100,100)";
 					ctx.strokeStyle="rgb(100,100,100)";
 					ctx.beginPath();	
@@ -468,6 +451,22 @@
 					ctx.closePath();
 					ctx.fill();
 					ctx.stroke();
+					ctx.fillText("Correlation", 160, 180+heightOffset);
+					ctx.font = '15px "times new roman"';
+					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 200+heightOffset);
+					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 200+heightOffset);
+					ctx.lineWidth = '8';
+					var heatmapColors= cx4.heatmapColors;
+					var colorWidth = 130/heatmapColors.length;
+					var d=0;
+					for (var g = 0; g < heatmapColors.length; g++) {						
+						ctx.beginPath();
+						ctx.strokeStyle = heatmapColors[g];
+						ctx.moveTo(20+d, 175+heightOffset);
+						ctx.lineTo(20+colorWidth + d, 175+heightOffset);
+						ctx.stroke();
+						d=d+colorWidth;
+					}
 				} else {					
 					ctx.strokeStyle = "rgb(55,55,55)";
 					ctx.fillStyle="rgb(55,55,55)";
@@ -480,25 +479,26 @@
 					ctx.beginPath();
 					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
 					ctx.fill();
-					ctx.stroke();
-					ctx.strokeStyle = 'red';
-					ctx.lineWidth = '3';
-					ctx.beginPath();
-					ctx.moveTo(20, 130+heightOffset);
-					ctx.lineTo(105, 130+heightOffset);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.strokeStyle = 'blue'
-					ctx.moveTo(20, 175+heightOffset);
-					ctx.lineTo(105, 175+heightOffset);
-					ctx.stroke();
+					ctx.stroke();					
 					ctx.fillStyle='black';
 					ctx.fillText("Gene sets up-regulated in phenotype 0", 120, 50+heightOffset);
 					ctx.fillText("Gene sets up-regulated in phenotype 1", 120, 95+heightOffset);
-					ctx.fillStyle='red';
-					ctx.fillText("Positive correlation", 120, 140+heightOffset);
-					ctx.fillStyle='blue';
-					ctx.fillText("Negative correlation", 120, 185+heightOffset);
+					ctx.fillText("Correlation", 160, 135+heightOffset);
+					ctx.font = '15px "times new roman"';
+					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
+					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
+					ctx.lineWidth = '8';
+					var heatmapColors= cx4.heatmapColors;
+					var d=0;
+					var colorWidth = 130/heatmapColors.length;
+					for (var g = 0; g < heatmapColors.length; g++) {						
+						ctx.beginPath();
+						ctx.strokeStyle = heatmapColors[g];
+						ctx.moveTo(20+d, 130+heightOffset);
+						ctx.lineTo(20+colorWidth + d, 130+heightOffset);
+						ctx.stroke();
+						d=d+colorWidth;
+					}					
 				}
 			}
 
