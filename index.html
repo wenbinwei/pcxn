@@ -35,6 +35,7 @@
 			var minPValueInResponse = 1;
 			var minCorrInHeatmap = 0;
 			var maxCorrInHeatmap = 0;
+			var heatmapColors = [];
 
             function makeCanvasFitBoxContainer(selector) {
                 // Throw away the canvas element and make a new one.
@@ -123,6 +124,16 @@
          				.text(mSigDBC5GeneSets[i])); 
 				} 				
 			}
+			
+			getHeatmapColor = function(d, c, e) {
+        		e = Number(e);
+        		var b = Math.abs(d);
+        		d += b;
+        		c += b;
+        		e += b;
+        		var a = ((e - d) * heatmapColors.length / (c - d)).toFixed() - 1;
+        		return heatmapColors[Math.max(0, Math.min(heatmapColors.length - 1, a))]
+    		};
 			
 			function handleForm1Response(response) {				
 				// Get unique geneset names
@@ -277,6 +288,22 @@
 					cx4.clusterVariables();
 				}
 				
+				cx4.setRGB();
+				var k = maxCorrInHeatmap - minCorrInHeatmap;
+        		var d = cx4.heatmapType.split("-");
+        		var m = 256 / cx4.indicatorBins;
+        		var l = cx4.blues;
+        		heatmapColors = [];
+        		for (var h = 0; h < m; h++) {
+                    heatmapColors.push(l[h])
+                }
+                
+                heatmapColors.push("rgb(255,255,255)");
+                l = cx4.reds;
+                for (var h = m - 1; h >= 0; h--) {
+                    heatmapColors.push(l[h])
+                }
+				
 				//network
 				var nodes = [];
 				var inNetwork ={};				
@@ -296,7 +323,7 @@
 							"id2" : form1Response[k][1],
 							//"color" : "rgba(255,0,0, 0.3)",
 							//"color" : cx4.addColorTransparency(cx4.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor), 0.3),
-							"color" : cx4.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor),
+							"color" : getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor),
 							"type" : "line",
 							"width" : lineWidth,
 							"value": partialCor};
@@ -417,7 +444,7 @@
 					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
 					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
 					ctx.lineWidth = '8';
-					var heatmapColors= cx4.heatmapColors;
+					//var heatmapColors= cx4.heatmapColors;
 					var d=0;
 					var colorWidth = 130/heatmapColors.length;
 					for (var g = 0; g < heatmapColors.length; g++) {						
@@ -457,7 +484,7 @@
 					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 200+heightOffset);
 					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 200+heightOffset);
 					ctx.lineWidth = '8';
-					var heatmapColors= cx4.heatmapColors;
+					//var heatmapColors= cx4.heatmapColors;
 					var colorWidth = 130/heatmapColors.length;
 					var d=0;
 					for (var g = 0; g < heatmapColors.length; g++) {						
@@ -489,7 +516,7 @@
 					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
 					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
 					ctx.lineWidth = '8';
-					var heatmapColors= cx4.heatmapColors;
+					//var heatmapColors= cx4.heatmapColors;
 					var d=0;
 					var colorWidth = 130/heatmapColors.length;
 					for (var g = 0; g < heatmapColors.length; g++) {						
@@ -761,7 +788,7 @@
 						<div class="col-sm-12 result" id="menu2">
 						<label class="result">Show</label>
 						<input class="result" type="checkbox" id="checkboxHeatmap" checked="checked">heatmap
-						<input class="result" type="checkbox" id="checkboxNetwork">network					
+						<input class="result" type="checkbox" id="checkboxNetwork" checked="checked">network					
 						<input class="result" type="checkbox" id="checkboxNetworkLegend">network legend
 						<input class="result" type="checkbox" id="checkboxGeneList">gene list
 						<input class="result" type="checkbox" id="checkboxCorrelationTable">network data table				
