@@ -36,6 +36,8 @@
 			var minCorrInHeatmap = 0;
 			var maxCorrInHeatmap = 0;
 			var heatmapColors = [];
+			var cxNetwork = null;
+			var cxHeatmap = null;
 
             function makeCanvasFitBoxContainer(selector) {
                 // Throw away the canvas element and make a new one.
@@ -221,7 +223,7 @@
 				ctx4.clearRect(0, 0, canvas1.width, canvas1.height);
 				var clusterMethod = $("#selectClusterMethod").val();
 				//alert("Clustermethod: " + clusterMethod);				
-				var cx4 = new CanvasXpress('canvas1',
+				cxHeatmap = new CanvasXpress('canvas1',
 					{
 						"z": { "gs" : outputGenesetNames},
 						"x": { "gs" : outputGenesetNames},
@@ -284,22 +286,24 @@
 					}
 				);
 				if (clusterMethod != "DoNotCluster") {
-					cx4.clusterSamples();
-					cx4.clusterVariables();
+					cxHeatmap.clusterSamples();
+					cxHeatmap.clusterVariables();
 				}
 				
-				cx4.setRGB();
+				cxHeatmap.setRGB();
+				//alert(cxHeatmap.indicatorBins);
+				//alert(Math.min(cxHeatmap.x, cxHeatmap.y));
 				var k = maxCorrInHeatmap - minCorrInHeatmap;
-        		var d = cx4.heatmapType.split("-");
-        		var m = 256 / cx4.indicatorBins;
-        		var l = cx4.blues;
+        		var d = cxHeatmap.heatmapType.split("-");
+        		var m = 256 / cxHeatmap.indicatorBins;
+        		var l = cxHeatmap.blues;
         		heatmapColors = [];
         		for (var h = 0; h < m; h++) {
                     heatmapColors.push(l[h])
                 }
                 
                 heatmapColors.push("rgb(255,255,255)");
-                l = cx4.reds;
+                l = cxHeatmap.reds;
                 for (var h = m - 1; h >= 0; h--) {
                     heatmapColors.push(l[h])
                 }
@@ -322,7 +326,7 @@
 						edges[edgeIndex] = {"id1" : form1Response[k][0],
 							"id2" : form1Response[k][1],
 							//"color" : "rgba(255,0,0, 0.3)",
-							//"color" : cx4.addColorTransparency(cx4.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor), 0.3),
+							//"color" : cxHeatmap.addColorTransparency(cxHeatmap.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor), 0.3),
 							"color" : getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor),
 							"type" : "line",
 							"width" : lineWidth,
@@ -376,7 +380,7 @@
 				t.rows.add( tableData );
 				t.draw();
 				
-				var cx2 = new CanvasXpress(
+				cxNetwork = new CanvasXpress(
 					"canvas2",
 					{
 						"nodes" : nodes,
@@ -444,7 +448,7 @@
 					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
 					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
 					ctx.lineWidth = '8';
-					//var heatmapColors= cx4.heatmapColors;
+					//var heatmapColors= cxHeatmap.heatmapColors;
 					var d=0;
 					var colorWidth = 130/heatmapColors.length;
 					for (var g = 0; g < heatmapColors.length; g++) {						
@@ -484,7 +488,7 @@
 					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 200+heightOffset);
 					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 200+heightOffset);
 					ctx.lineWidth = '8';
-					//var heatmapColors= cx4.heatmapColors;
+					//var heatmapColors= cxHeatmap.heatmapColors;
 					var colorWidth = 130/heatmapColors.length;
 					var d=0;
 					for (var g = 0; g < heatmapColors.length; g++) {						
@@ -516,7 +520,7 @@
 					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
 					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
 					ctx.lineWidth = '8';
-					//var heatmapColors= cx4.heatmapColors;
+					//var heatmapColors= cxHeatmap.heatmapColors;
 					var d=0;
 					var colorWidth = 130/heatmapColors.length;
 					for (var g = 0; g < heatmapColors.length; g++) {						
@@ -672,6 +676,9 @@
 				clearTimeout(resizeTimer);
 				resizeTimer = setTimeout(doneResizing, 100);
 			});
+			
+			function saveHeatmapAsPNG() {cxHeatmap.print();}
+			function saveNetworkAsPNG() {cxNetwork.print();}
 		</script>
 	</head>
 	<body>
@@ -797,36 +804,38 @@
 				</div>
 				<div class="row result">
 					<div class="col-sm-12">
-                    <!-- The "box" class here is used to find the right DIV when resizing.
-                         See sizeCanvas() -->
 						<div class="col-sm-6 result box" id="divHeatmap">
-						<label>Partial Correlation Heatmap</label><br>
-                        <!-- This div gets replaced by sizeCanvas() -->
-                        <div>
-                            <canvas id="canvas1"></canvas>
-                        </div>
-					</div>
+							<!-- The "box" class here is used to find the right DIV when resizing.
+                         	See sizeCanvas() -->
+							<label>Partial Correlation Heatmap</label>
+							<input type="button" id="buttonpng1" value="PNG" onclick="saveHeatmapAsPNG();"/><br>
+                        	<!-- This div gets replaced by sizeCanvas() -->
+                        	<div>
+                            	<canvas id="canvas1"></canvas>
+                        	</div>
+						</div>
 						<div class="col-sm-6 result row" style="padding-left: 30px;" id="divNetowrk">
-							<label class="result row" id="netWorkHeadLabel" style="padding-left: 15px;">Partial Correlation Network</label>
+							<label class="result" id="netWorkHeadLabel">Partial Correlation Network</label>
+							<input type="button" id="buttonpng2" value="PNG" onclick="saveNetworkAsPNG();"/><br>
 							<div class="col-sm-12 row result box">
-                        	<div class="result row">
-                            <canvas class="result" id="canvas2"></canvas>
-                        </div>
-                        </div>
+                        		<div class="result row">
+                            		<canvas class="result" id="canvas2"></canvas>
+                        		</div>
+                        	</div>
                         	<div class="col-sm-12 result row" id="divSlides">
-                        	<div class="col-sm-12 row result">
-								<div class="col-sm-12 row result">
-                    			<label class="result" for="amount" style="width: 180px">Min absolute correlation:</label>
-                    			<input class="result" size="3" type="range" id="coefficientSlide" min="0.01" max="1" step="0.01" style="width: 150px; display: inline"/>
-                    			<input class="result" disabled=true size="3" type="text" id="coefficientText" style="border:0; margin-bottom:0; width: 50px" />
-							</div>
-							<div class="col-sm-12 row result">
-                    			<label class="result" for="pvalueSlide" style="width: 180px">Max correlation p value:</label>
-                    			<input class="result" size="3" type="range" id="pvalueSlide" min="0.001" max="0.05" step="0.001" style="width: 150px; display: inline"/>
-                    			<input class="result" disabled=true size="3" type="text" id="pvalueText" style="border:0; margin-bottom:0; width: 50px" />   		
-                			</div>
-                			</div>
-                		</div>                		
+                        		<div class="col-sm-12 row result">
+									<div class="col-sm-12 row result">
+                    					<label class="result" for="amount" style="width: 180px">Min absolute correlation:</label>
+                    					<input class="result" size="3" type="range" id="coefficientSlide" min="0.01" max="1" step="0.01" style="width: 150px; display: inline"/>
+                    					<input class="result" disabled=true size="3" type="text" id="coefficientText" style="border:0; margin-bottom:0; width: 50px" />
+									</div>
+									<div class="col-sm-12 row result">
+                    					<label class="result" for="pvalueSlide" style="width: 180px">Max correlation p value:</label>
+                    					<input class="result" size="3" type="range" id="pvalueSlide" min="0.001" max="0.05" step="0.001" style="width: 150px; display: inline"/>
+                    					<input class="result" disabled=true size="3" type="text" id="pvalueText" style="border:0; margin-bottom:0; width: 50px" />   		
+                					</div>
+                				</div>
+                			</div>                		
 						</div>										
 						<div class="col-sm-6 result row" id="divGeneList" style="padding-left: 30px;">	
 						<label class="result">Gene set (click on a gene set name on heatmap or network to select)</label><br>
@@ -855,8 +864,8 @@
 						<p id="table2waiting" class="waitmessage">Please wait. Getting data ....</p>
 					</div>					
 						<div class="col-sm-6 result row" id="divLegend">						
-						<canvas id="canvas3" width="450" height="300"></canvas>
-					</div>				
+							<canvas id="canvas3" width="450" height="300"></canvas>
+						</div>				
 					</div>
 				</div>				
 				<div class="row result" id="divTable1">
