@@ -73,8 +73,8 @@
                 	makeCanvasFitBoxContainer('#canvas2');
                 	$("#netWorkHeadLabel").parents().show();
                 	$("#netWorkHeadLabel").show();
-                	$("#divSlides").parents().show();
-                	$("#divSlides").children().show();
+                	$("#divSliders").parents().show();
+                	$("#divSliders").children().show();
                 }
             }
 
@@ -129,10 +129,6 @@
 			
 			getHeatmapColor = function(d, c, e) {
         		e = Number(e);
-        		var b = Math.abs(d);
-        		d += b;
-        		c += b;
-        		e += b;
         		var a = ((e - d) * heatmapColors.length / (c - d)).toFixed() - 1;
         		return heatmapColors[Math.max(0, Math.min(heatmapColors.length - 1, a))]
     		};
@@ -213,9 +209,14 @@
 					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
 					if(form1Response[k][2] < minCorrInHeatmap){minCorrInHeatmap = form1Response[k][2];}
 					if(form1Response[k][2] > maxCorrInHeatmap){maxCorrInHeatmap = form1Response[k][2];}
+					var partialCor = form1Response[k][2];
+					var pValue = form1Response[k][3];
+					if (Math.abs(partialCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(partialCor);}
+					if (pValue < minPValueInResponse) {minPValueInResponse = pValue;}
 				}
 
                 sizeCanvas();
+                document.getElementById("coefficientSlider").max=maxCorrInResponse;
                 //$(window).resize();
 				
 				var cnv4=document.getElementById('canvas1');
@@ -246,7 +247,8 @@
 							"title": "",
 							"disableMenu" : true,
 							"disableToolbar" : true,
-							"resizable" : true
+							"resizable" : true,
+							"indicatorCenter" : "white"
 					},
 					{
 						'click' : function(o, e, t) {
@@ -291,10 +293,12 @@
 				}
 				
 				cxHeatmap.setRGB();
+				//alert(cxHeatmap.getHeatmapColor);
+				//alert(cxHeatmap.setMin);
 				//alert(cxHeatmap.indicatorBins);
 				//alert(Math.min(cxHeatmap.x, cxHeatmap.y));
-				var k = maxCorrInHeatmap - minCorrInHeatmap;
-        		var d = cxHeatmap.heatmapType.split("-");
+				//var k = maxCorrInHeatmap - minCorrInHeatmap;
+        		//var d = cxHeatmap.heatmapType.split("-");
         		var m = 256 / cxHeatmap.indicatorBins;
         		var l = cxHeatmap.blues;
         		heatmapColors = [];
@@ -317,8 +321,8 @@
 				for(var k = 0; k < form1Response.length; ++k){
 					var partialCor = form1Response[k][2];
 					var pValue = form1Response[k][3];
-					if (Math.abs(partialCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(partialCor);}
-					if (pValue < minPValueInResponse) {minPValueInResponse = pValue;}
+					//if (Math.abs(partialCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(partialCor);}
+					//if (pValue < minPValueInResponse) {minPValueInResponse = pValue;}
 					if ( (Math.abs(partialCor) > corrCutOffValue) && (pValue < pCutOffValue) ) {
 						tableData[edgeIndex] = form1Response[k];
 						//var lineWidth = Math.abs(3*partialCor) + 1;
@@ -327,7 +331,8 @@
 							"id2" : form1Response[k][1],
 							//"color" : "rgba(255,0,0, 0.3)",
 							//"color" : cxHeatmap.addColorTransparency(cxHeatmap.getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor), 0.3),
-							"color" : getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor),
+							//"color" : getHeatmapColor(minCorrInHeatmap, maxCorrInHeatmap, partialCor),
+							"color" : getHeatmapColor(0-maxCorrInResponse, maxCorrInResponse, partialCor),
 							"type" : "line",
 							"width" : lineWidth,
 							"value": partialCor};
@@ -426,27 +431,31 @@
 				var heightOffset = 45;
 				ctx.fillStyle='black';
 				ctx.fillText("Network legend", 20, 45);
+				var nodeLegedRadius = 10;
 				if ((upGenesetNames.length + downGenesetNames)==1){					
 					ctx.strokeStyle = "rgb(100,100,100)";
 					ctx.fillStyle="rgb(100,100,100)";
 					ctx.beginPath();
-					ctx.arc(35, 87.5+heightOffset, 15/2, 0, Math.PI*2, false);
+					ctx.arc(35, 87.5+heightOffset, nodeLegedRadius/2, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
 					ctx.strokeStyle = "rgb(200,200,200)";
 					ctx.fillStyle="rgb(200,200,200)"; 
 					ctx.beginPath();
-					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.arc(35, 42.5+heightOffset, nodeLegedRadius, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
 					ctx.font = '20px "times new roman"';
 					ctx.fillStyle='black';
-					ctx.fillText("Query gene sets", 120, 50+heightOffset);
+					ctx.fillText("Query gene set", 120, 50+heightOffset);
 					ctx.fillText("Other gene sets", 120, 95+heightOffset);
 					ctx.fillText("Correlation", 160, 135+heightOffset);
 					ctx.font = '15px "times new roman"';
-					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
-					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
+					//ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
+					//ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
+					ctx.fillText(0-maxCorrInResponse.toFixed(1), 10, 155+heightOffset);
+					ctx.fillText(maxCorrInResponse.toFixed(1), 140, 155+heightOffset);
+					ctx.fillText("0", 81, 155+heightOffset);
 					ctx.lineWidth = '8';
 					//var heatmapColors= cxHeatmap.heatmapColors;
 					var d=0;
@@ -463,13 +472,13 @@
 					ctx.strokeStyle = "rgb(55,55,55)";
 					ctx.fillStyle="rgb(55,55,55)";
 					ctx.beginPath();
-					ctx.arc(35, 87.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.arc(35, 87.5+heightOffset, nodeLegedRadius, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
 					ctx.strokeStyle = "rgb(200,200,200)";
 					ctx.fillStyle="rgb(200,200,200)"; 
 					ctx.beginPath();
-					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.arc(35, 42.5+heightOffset, nodeLegedRadius, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
 					ctx.fillStyle='black';
@@ -479,14 +488,15 @@
 					ctx.fillStyle="rgb(100,100,100)";
 					ctx.strokeStyle="rgb(100,100,100)";
 					ctx.beginPath();	
-					ctx.arc(35, 125+heightOffset, 15/2, 0, Math.PI*2, false);
+					ctx.arc(35, 125+heightOffset, nodeLegedRadius/2, 0, Math.PI*2, false);
 					ctx.closePath();
 					ctx.fill();
 					ctx.stroke();
 					ctx.fillText("Correlation", 160, 180+heightOffset);
 					ctx.font = '15px "times new roman"';
-					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 200+heightOffset);
-					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 200+heightOffset);
+					ctx.fillText(0-maxCorrInResponse.toFixed(1), 10, 200+heightOffset);
+					ctx.fillText(maxCorrInResponse.toFixed(1), 140, 200+heightOffset);
+					ctx.fillText("0", 81, 200+heightOffset);
 					ctx.lineWidth = '8';
 					//var heatmapColors= cxHeatmap.heatmapColors;
 					var colorWidth = 130/heatmapColors.length;
@@ -503,13 +513,13 @@
 					ctx.strokeStyle = "rgb(55,55,55)";
 					ctx.fillStyle="rgb(55,55,55)";
 					ctx.beginPath();
-					ctx.arc(35, 87.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.arc(35, 87.5+heightOffset, nodeLegedRadius, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();
 					ctx.strokeStyle = "rgb(200,200,200)";
 					ctx.fillStyle="rgb(200,200,200)"; 
 					ctx.beginPath();
-					ctx.arc(35, 42.5+heightOffset, 15, 0, Math.PI*2, false);
+					ctx.arc(35, 42.5+heightOffset, nodeLegedRadius, 0, Math.PI*2, false);
 					ctx.fill();
 					ctx.stroke();					
 					ctx.fillStyle='black';
@@ -517,8 +527,9 @@
 					ctx.fillText("Gene sets up-regulated in phenotype 1", 120, 95+heightOffset);
 					ctx.fillText("Correlation", 160, 135+heightOffset);
 					ctx.font = '15px "times new roman"';
-					ctx.fillText(minCorrInHeatmap.toFixed(1), 10, 155+heightOffset);
-					ctx.fillText(maxCorrInHeatmap.toFixed(1), 140, 155+heightOffset);
+					ctx.fillText(0-maxCorrInResponse.toFixed(1), 10, 155+heightOffset);
+					ctx.fillText(maxCorrInResponse.toFixed(1), 140, 155+heightOffset);
+					ctx.fillText("0", 81, 155+heightOffset);
 					ctx.lineWidth = '8';
 					//var heatmapColors= cxHeatmap.heatmapColors;
 					var d=0;
@@ -822,16 +833,16 @@
                             		<canvas class="result" id="canvas2"></canvas>
                         		</div>
                         	</div>
-                        	<div class="col-sm-12 result row" id="divSlides">
+                        	<div class="col-sm-12 result row" id="divSliders">
                         		<div class="col-sm-12 row result">
 									<div class="col-sm-12 row result">
                     					<label class="result" for="amount" style="width: 180px">Min absolute correlation:</label>
-                    					<input class="result" size="3" type="range" id="coefficientSlide" min="0.01" max="1" step="0.01" style="width: 150px; display: inline"/>
+                    					<input class="result" size="3" type="range" id="coefficientSlider" min="0.01" max="1" step="0.01" style="width: 150px; display: inline"/>
                     					<input class="result" disabled=true size="3" type="text" id="coefficientText" style="border:0; margin-bottom:0; width: 50px" />
 									</div>
 									<div class="col-sm-12 row result">
-                    					<label class="result" for="pvalueSlide" style="width: 180px">Max correlation p value:</label>
-                    					<input class="result" size="3" type="range" id="pvalueSlide" min="0.001" max="0.05" step="0.001" style="width: 150px; display: inline"/>
+                    					<label class="result" for="pvalueSlider" style="width: 180px">Max correlation p value:</label>
+                    					<input class="result" size="3" type="range" id="pvalueSlider" min="0.001" max="0.05" step="0.001" style="width: 150px; display: inline"/>
                     					<input class="result" disabled=true size="3" type="text" id="pvalueText" style="border:0; margin-bottom:0; width: 50px" />   		
                 					</div>
                 				</div>
@@ -961,42 +972,42 @@
 		document.getElementById("radioMSigDBC5").addEventListener("click", form2RadioClick);
 		document.getElementById("radioSearchGeneSet").addEventListener("click", form2RadioClick);
 		
-		function coefficientSlideChange (e) {
-			$("#coefficientText").val($("#coefficientSlide").val());
-			if ($("#coefficientSlide").val() > maxCorrInResponse) {
-				alert("None of the edges in the network has absolute correlation coefficient > " + $("#coefficientSlide").val() + ". Notwork has not been changed." ) ;
-				$("#coefficientSlide").val(maxCorrInResponse);
-				$("#coefficientText").val($("#coefficientSlide").val());
+		function coefficientSliderChange (e) {
+			$("#coefficientText").val($("#coefficientSlider").val());
+			if ($("#coefficientSlider").val() > maxCorrInResponse) {
+				alert("None of the edges in the network has absolute correlation coefficient > " + $("#coefficientSlider").val() + ". Notwork has not been changed." ) ;
+				$("#coefficientSlider").val(maxCorrInResponse);
+				$("#coefficientText").val($("#coefficientSlider").val());
 				return;
 			}
-			$("#inputCorrelation").val($("#coefficientSlide").val());
+			$("#inputCorrelation").val($("#coefficientSlider").val());
 			//javascript:send();
-			corrCutOffValue = $("#coefficientSlide").val();
+			corrCutOffValue = $("#coefficientSlider").val();
 			handleForm1Response(form1Response);				
 		}
 		
-		function coefficientSlideInput (e) {
-			$("#coefficientText").val($("#coefficientSlide").val());						
+		function coefficientSliderInput (e) {
+			$("#coefficientText").val($("#coefficientSlider").val());						
 		}
 		
-		function pvalueSlideChange (e) {
-			$("#pvalueText").val($("#pvalueSlide").val());
-			if ($("#pvalueSlide").val() < minPValueInResponse) {
-				alert("None of the edges in the network has correlation p value < " + $("#pvalueSlide").val()) ;
+		function pvalueSliderChange (e) {
+			$("#pvalueText").val($("#pvalueSlider").val());
+			if ($("#pvalueSlider").val() < minPValueInResponse) {
+				alert("None of the edges in the network has correlation p value < " + $("#pvalueSlider").val()) ;
 			}
-			$("#inputpValue").val($("#pvalueSlide").val());				
+			$("#inputpValue").val($("#pvalueSlider").val());				
 			//javascript:send();
-			pCutOffValue =$("#pvalueSlide").val();
+			pCutOffValue =$("#pvalueSlider").val();
 			handleForm1Response(form1Response);				
 		}
 		
-		function pvalueSlideInput (e) {
-			$("#pvalueText").val($("#pvalueSlide").val());	
+		function pvalueSliderInput (e) {
+			$("#pvalueText").val($("#pvalueSlider").val());	
 		}
-		document.getElementById("coefficientSlide").addEventListener("change", coefficientSlideChange);
-		document.getElementById("coefficientSlide").addEventListener("input", coefficientSlideInput);
-		document.getElementById("pvalueSlide").addEventListener("change", pvalueSlideChange);
-		document.getElementById("pvalueSlide").addEventListener("input", pvalueSlideInput);
+		document.getElementById("coefficientSlider").addEventListener("change", coefficientSliderChange);
+		document.getElementById("coefficientSlider").addEventListener("input", coefficientSliderInput);
+		document.getElementById("pvalueSlider").addEventListener("change", pvalueSliderChange);
+		document.getElementById("pvalueSlider").addEventListener("input", pvalueSliderInput);
 		
 		function displayResults (){
 			$("#divInput").find('*').hide();
@@ -1018,13 +1029,13 @@
 				$("#divNetowrk").children().show();
 				$("#netWorkHeadLabel").show();				
 				$("#canvas2").show();
-				$("#divSlides").show();
-				$("#divSlides").children().show();			
+				$("#divSliders").show();
+				$("#divSliders").children().show();			
 			} else {
 				$("#divNetowrk").find('*').hide();
 				$("#divNetowrk").hide();
-				$("#divSlides").hide();
-				$("#divSlides").children().hide();
+				$("#divSliders").hide();
+				$("#divSliders").children().hide();
 			}
 								
 			if (document.getElementById("checkboxGeneList").checked) {
@@ -1062,8 +1073,8 @@
 			} else {
 				$("#divNetowrk").children().hide();
 				$("#divNetowrk").hide();
-				$("#divSlides").children().hide();
-				$("#divSlides").hide();
+				$("#divSliders").children().hide();
+				$("#divSliders").hide();
 			}
 		}
 		
