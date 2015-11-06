@@ -2,6 +2,11 @@
 <html>
 	<head>
 		<title>PCxN</title>
+		<meta property="og:url"                content="http://pcxn.org:8080/index.html" />
+		<meta property="og:type"               content="website" />
+		<meta property="og:title"              content="PCxN The Pathway Co-Activity Map" />
+		<meta property="og:description"        content="A database for partial correlation of pathways/gene sets" />
+		<meta property="og:image"              content="http://pcxn.org:8080/pcxnscreenshot1.png" />
 		<script src="http://canvasxpress.org/js/canvasXpress.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.css">
 		<script type="text/javascript" language="javascript" src="/js/jquery-2.1.1.min.js"></script>
@@ -10,7 +15,7 @@
 		<link href="/shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />		
 		<link rel="stylesheet" type="text/css" href="/TableTools/css/dataTables.tableTools.css">
 		<script type="text/javascript" language="javascript" src="/TableTools/js/dataTables.tableTools.js"></script>
-		<link rel="stylesheet" type="text/css" href="/pcxn/pcxn.css">
+		<link rel="stylesheet" type="text/css" href="pcxn.css">
 
 		<script type="text/javascript">
 			$(document).ready(function(){
@@ -18,7 +23,7 @@
 				$("#form1").hide();
 				$(".result").hide();
     			var parms = {geneSetCollection :"all"};
-				$.getJSON("/pcxn/getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
+				$.getJSON("getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
 			var pCutOffValue = 0.05;
 			var topNValue = 0;
@@ -584,7 +589,7 @@
 					$(".result").hide();
 					//$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("/pcxn/getPartialCorrelation.jsp", parms).done(handleForm1Response);
+					$.getJSON("getPartialCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
@@ -632,7 +637,7 @@
 				$("#checkboxGeneList").prop('checked', true);
 				//var geneSetNameValue = document.getElementById("selctedLeafName").innerHTML;
 				var parms = {geneSetCollection : geneSetCollectionValue, geneSetName : geneSetNameValue};
-				$.getJSON("/pcxn/getGeneSetMembers.jsp", parms).done(handleTable2Response);
+				$.getJSON("getGeneSetMembers.jsp", parms).done(handleTable2Response);
 			}
 			
 			function handleTable2Response(response) {
@@ -680,6 +685,7 @@
 				$("#inputpValue2").hide();
 				$("#button4").hide();
 				$("#button3").hide();
+				$("#divShareButtons").hide();
 			}
 						
 			var resizeTimer;
@@ -693,6 +699,40 @@
 		</script>
 	</head>
 	<body>
+		<script>
+  			window.fbAsyncInit = function() {
+    			FB.init({
+      				appId      : '490640384441982',
+      				xfbml      : true,
+      				version    : 'v2.5'
+    			});
+  			};
+
+  			(function(d, s, id){
+     			var js, fjs = d.getElementsByTagName(s)[0];
+     			if (d.getElementById(id)) {return;}
+     			js = d.createElement(s); js.id = id;
+     			js.src = "//connect.facebook.net/en_US/sdk.js";
+     			fjs.parentNode.insertBefore(js, fjs);
+   			}(document, 'script', 'facebook-jssdk'));
+		</script>
+		<script>window.twttr = (function(d, s, id) {
+  			var js, fjs = d.getElementsByTagName(s)[0],
+    		t = window.twttr || {};
+  			if (d.getElementById(id)) return t;
+  			js = d.createElement(s);
+  			js.id = id;
+  			js.src = "https://platform.twitter.com/widgets.js";
+  			fjs.parentNode.insertBefore(js, fjs);
+ 
+  			t._e = [];
+  			t.ready = function(f) {
+    			t._e.push(f);
+  			};
+ 
+  			return t;
+			}(document, "script", "twitter-wjs"));
+		</script>
 		<div class="container-fluid">
 			<div class="row" id="divHeader">
 				<div class="col-sm-12">
@@ -799,6 +839,24 @@
 						 are treated as three separate collections.</p>
 					</div>
 				</div>
+			</div>
+			<div class="row" id="divShareButtons">
+				<table style="width:100%">
+					<tr>
+        				<td>Share PCxN</td>
+            			<td><a href="mailto:?subject=PCxN&body=http%3A%2F%2Fpcxn.org"><img src="envelope.png" alt="Email" height="28" width="45"></a>
+            			</td>                		
+                		<td>
+        				<div class="fb-share-button" data-href="http://pcxn.org:8080" data-layout="button"></div>
+    				</td>
+    					<td><a class="twitter-share-button" data-count="none" href="https://twitter.com/intent/tweet?text=Pathway%20Co-Activity%20Map&url=http%3A%2F%2Fpcxn.org:8080">
+       						</a>
+    					</td>
+               			<td><script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
+					<script type="IN/Share" data-url="http://pcxn.org:8080"></script>
+    			</td>
+            	  	</tr>
+				</table>
 			</div>
 			<div class="row" id="divResult">
 				<div class="row result">
@@ -963,6 +1021,7 @@
 			$("#inputpValue2").show();
 			$("#button4").show();
 			$("#button3").show();
+			$("#divShareButtons").show();
 			$(".ui-helper-hidden-accessible").hide();	
 		}	
 		document.getElementById("radioAnalysis1").addEventListener("click", radioAnalysisClick);
@@ -1012,6 +1071,7 @@
 		function displayResults (){
 			$("#divInput").find('*').hide();
 			$("#divInput").hide();
+			$("#divShareButtons").hide();
 			$(".result").show();
 				
 			if (document.getElementById("checkboxHeatmap").checked) {
