@@ -127,20 +127,11 @@ input[type="range"]::-ms-tooltip {
 	display: none;
 }
 
-
-#divShareButtons td
-{
-	width: 80px;
-	height: 20px;
-	text-align: center;
-	vertical-align: middle;
-}
-
 #divShareButtons
 {
 	position: absolute;
-	bottom:1px;
-	padding-left: 30%;
+	bottom:2px;
+	padding-left: 42%;
 }
 
 
