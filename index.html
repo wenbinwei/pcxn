@@ -10,24 +10,17 @@
 		<script src="/canvasxpress/js/canvasXpress.min.js"></script>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"/>
 		<link rel="stylesheet" href="/css/sbg.css"/>
-		<script type="text/javascript" language="javascript" src="/js/sbg.js"></script>
+		<script type="text/javascript" src="/js/sbg.js"></script>
 		<link rel="stylesheet" type="text/css" href="/css/jquery.dataTables.css">
-		<script type="text/javascript" language="javascript" src="/js/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
 		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-		<script type="text/javascript" language="javascript" src="/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
 		<link href="/shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />		
 		<link rel="stylesheet" type="text/css" href="/TableTools/css/dataTables.tableTools.css">
-		<script type="text/javascript" language="javascript" src="/TableTools/js/dataTables.tableTools.js"></script>
+		<script type="text/javascript" src="/TableTools/js/dataTables.tableTools.js"></script>
 		<link rel="stylesheet" type="text/css" href="pcxn.css">
 
 		<script type="text/javascript">
-			$(document).ready(function(){
-                sizeCanvas();
-				$("#form1").hide();
-				$(".result").hide();
-    			var parms = {geneSetCollection :"all"};
-				$.getJSON("getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
-			});
 			var pCutOffValue = 0.05;
 			var topNValue = 0;
 			var form1Response;
@@ -46,6 +39,117 @@
 			var heatmapColors = [];
 			var cxNetwork = null;
 			var cxHeatmap = null;
+			var explore = true;
+			
+			$(document).ready(function(){
+				checkLocalStorage();
+                sizeCanvas();
+                if(explore) {
+					$("#form1").hide();
+				} else {
+					$("#form2").hide();
+				}
+				$(".result").hide();
+    			var parms = {geneSetCollection :"all"};
+				$.getJSON("getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
+			});
+            
+            function set_matching_word(selectObj, word) {
+                for(var i = 0; i < selectObj.length; i++) {
+                    if(selectObj.options[i].value == word)
+                      alert(i);
+                      selectObj.selectedIndex = i;
+                }
+            }
+						
+			function checkLocalStorage() {
+			    var tmp = localStorage.getItem("explore");
+    			if (tmp != "") {
+        			explore = (tmp=="true");
+        			//alert(explore);
+        			if (!explore) {
+        				document.getElementById("radioAnalysis2").checked = true;
+        				tmp = localStorage.getItem("upgenesets");
+    					if (tmp != "") {
+        					$("#upgenesets").val(tmp);
+    					}
+    					
+    					tmp = localStorage.getItem("downgenesets");
+    					if (tmp != "") {
+        					$("#downgenesets").val(tmp);
+    					}
+    					
+    					tmp = localStorage.getItem("inputTopN");
+    					if (tmp != "") {
+        					$("#inputTopN").val(tmp);
+    					}
+    			
+    					tmp = localStorage.getItem("inputCorrelation");
+    					if (tmp != "") {
+        					$("#inputCorrelation").val(tmp);
+    					}
+    			
+    					tmp = localStorage.getItem("inputpValue");
+    					if (tmp != "") {
+        					$("#inputpValue").val(tmp);
+    					} 
+    			
+    					tmp = localStorage.getItem("selectGeneSetCollection");
+    					if (tmp != "") {
+        					$("#selectGeneSetCollection").val(tmp);
+    					} 
+                        
+                        
+        			} else {
+        				document.getElementById("radioAnalysis1").checked = true;
+                        tmp = localStorage.getItem("inputTopN2");
+    					if (tmp != "") {
+        					$("#inputTopN2").val(tmp);
+    					}
+    			
+    					tmp = localStorage.getItem("inputCorrelation2");
+    					if (tmp != "") {
+        					$("#inputCorrelation2").val(tmp);
+    					}
+    			
+    					tmp = localStorage.getItem("inputpValue2");
+    					if (tmp != "") {
+        					$("#inputpValue2").val(tmp);
+    					}
+                        
+                        var form2genesetCollection = localStorage.getItem("form2genesetCollection");
+                        var form2geneset = localStorage.getItem("form2geneset");
+    					if (form2geneset != "") {
+                            document.getElementById("radioSearchGeneSet").checked = true;
+                            $("#textfieldGeneSet").val(form2geneset);                         
+    					}
+        			}
+    			}
+                tmp = localStorage.getItem("selectClusterMethod");
+                if (tmp != "") {
+                    $("#selectClusterMethod").val(tmp);
+                }
+                tmp = localStorage.getItem("checkboxHeatmap");
+                if (tmp != "") {
+                    document.getElementById("checkboxHeatmap").checked = (tmp=="true");
+                }
+                tmp = localStorage.getItem("checkboxNetwork");
+                if (tmp != "") {
+                    document.getElementById("checkboxNetwork").checked = (tmp=="true");
+                }
+                tmp = localStorage.getItem("checkboxNetworkLegend");
+                if (tmp != "") {
+                    document.getElementById("checkboxNetworkLegend").checked = (tmp=="true");
+                }
+                tmp = localStorage.getItem("checkboxGeneList");
+                if (tmp != "") {
+                    document.getElementById("checkboxGeneList").checked = (tmp=="true");
+                }
+                tmp = localStorage.getItem("checkboxCorrelationTable");
+                if (tmp != "") {
+                    document.getElementById("checkboxCorrelationTable").checked = (tmp=="true");
+                }
+			}
 
             function makeCanvasFitBoxContainer(selector) {
                 // Throw away the canvas element and make a new one.
@@ -529,14 +633,23 @@
 			}
 
 			function send(){
-				var upVal = $("#upgenesets").val();
+                localStorage.setItem("explore", document.getElementById("radioAnalysis1").checked);
+				localStorage.setItem("upgenesets", $("#upgenesets").val());
+				localStorage.setItem("downgenesets", $("#downgenesets").val());
+				localStorage.setItem("inputTopN", $("#inputTopN").val());
+                localStorage.setItem("inputCorrelation", $("#inputCorrelation").val());
+				localStorage.setItem("inputpValue", $("#inputpValue").val());
+				localStorage.setItem("selectGeneSetCollection", $("#selectGeneSetCollection").val());				
+                localStorage.setItem("selectClusterMethod", $("#selectClusterMethod").val());
+				
+                var upVal = $("#upgenesets").val();
 				var downVal = $("#downgenesets").val();
 				var newTopNValue = $("#inputTopN").val();
 				var newPCutOffValue = $("#inputpValue").val();
 				var newCorrCutOffValue = $("#inputCorrelation").val();
 				var newGeneSetCollectionValue = $("#selectGeneSetCollection").val();
 				var newGeneSetsValue;
-
+                				
                 // JSP API gets confused with leading and traling blank lines.
                 // So eliminate those, and at the same time convert to upper case.
                 upGenesetNames = upVal.trim().toUpperCase().split("\n")
@@ -575,38 +688,69 @@
 			};
 			
 			function sendForm2(){
-				$("#inputTopN").val($("#inputTopN2").val());
-				$("#inputpValue").val($("#inputpValue2").val());				
-				$("#inputCorrelation").val($("#inputCorrelation2").val());
-				//alert($("#inputCorrelation").val());
-				//return;		
-				var val = $('input:radio[name=form2geneset]:checked').val();
+                localStorage.setItem("explore", document.getElementById("radioAnalysis1").checked);
+				localStorage.setItem("inputTopN2", $("#inputTopN2").val());
+                localStorage.setItem("inputCorrelation2", $("#inputCorrelation2").val());
+				localStorage.setItem("inputpValue2", $("#inputpValue2").val());
+                localStorage.setItem("form2genesetCollection", $('input:radio[name=form2geneset]:checked').val());
+                
+                //localStorage.removeItem("topNValue");                	
+				var form2genesetCollection = $('input:radio[name=form2geneset]:checked').val();
+                var form2geneset="";
 
-				if(val =="radioPathprint") {
-					$("#upgenesets").val($('#selectPathprint').val());
-				} else if (val == "radioMSigDBC2CP") {
-					$("#upgenesets").val($('#selectMSigDBC2CP').val());
-				} else if (val== "radioMSigDBC5") {
-					$("#upgenesets").val($('#selectMSigDBC5').val());
+				if(form2genesetCollection =="radioPathprint") {
+					form2geneset= $('#selectPathprint').val();
+				} else if (form2genesetCollection == "radioMSigDBC2CP") {
+					form2geneset=$('#selectMSigDBC2CP').val();
+				} else if (form2genesetCollection == "radioMSigDBC5") {
+					form2geneset=$('#selectMSigDBC5').val();
 				} else {
-					$("#upgenesets").val($('#textfieldGeneSet').val());
+					form2geneset=$('#textfieldGeneSet').val();
 				}
-				$("#downgenesets").val("") ;
-				var newGeneSetsValue = $("#upgenesets").val();
+				
+                localStorage.setItem("form2geneset", form2geneset);
+                
+				var newGeneSetsValue = form2geneset;
+                var newGeneSetCollectionValue = "";
 				if(mSigDBC2CPGeneSets.indexOf(newGeneSetsValue) >=0) {
-					$("#selectGeneSetCollection").val( "MSigDBC2CP");
+					newGeneSetCollectionValue = "MSigDBC2CP";
 				}
 				else if(mSigDBC5GeneSets.indexOf(newGeneSetsValue) >=0) {
-					$("#selectGeneSetCollection").val("MSigDBC5");
+					newGeneSetCollectionValue = "MSigDBC5";
 				}
 				else if(pathprintGeneSets.indexOf(newGeneSetsValue) >=0) {
-					$("#selectGeneSetCollection").val( "pathprint");
+					newGeneSetCollectionValue = "pathprint";
 				}
 				else {
 					alert("Your gene set is not in the database");
 					return;
 				}
-				javascript:send();
+				
+				var newTopNValue = $("#inputTopN2").val();
+				var newPCutOffValue = $("#inputpValue2").val();
+				var newCorrCutOffValue = $("#inputCorrelation2").val();
+				var newGeneSetsValue;
+                				                
+				if(newTopNValue==0) {
+					alert("Please specify the number of related gene sets to be found!");
+					return;
+				}
+
+				if (newGeneSetsValue!=geneSetsValue |newTopNValue != topNValue | newPCutOffValue != pCutOffValue | newCorrCutOffValue != corrCutOffValue | newGeneSetCollectionValue != geneSetCollectionValue) {
+					//alert("You have changed parameters!")
+					geneSetsValue = newGeneSetsValue;
+					topNValue = newTopNValue;					
+					pCutOffValue = newPCutOffValue;
+					corrCutOffValue = newCorrCutOffValue;
+					geneSetCollectionValue = newGeneSetCollectionValue;
+					$(".result").hide();
+					//$("#divResult").find('*').hide();
+					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
+					$.getJSON("getPartialCorrelation.jsp", parms).done(handleForm1Response);
+				} else {
+					//alert("You have not changed parameters!")
+					handleForm1Response(form1Response);
+				}
 			};
 			
 			function updateTable2(geneSetNameValue) {
@@ -695,7 +839,7 @@
 			</div>
 			<div class="row" id="divInput">
 				<div class="col-sm-6">
-					<form id="form2" class="well">						
+					<form id="form2" name="form2" class="well">						
 						<label for="inputTopN2">Find top</label>
 						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
 						<label>Correlated with</label><br>						
@@ -726,7 +870,7 @@
 						<input type="button" id="button3" value=" GO " onclick="javascript:sendForm2();"/>
 					</form>
 					
-					<form id="form1" class="well">
+					<form id="form1" name="form1" class="well">
 						<label for="upgenesets">Find partial correlation among gene sets up-regulated in phenotype 0</label><br>
 						<textarea rows="7" cols="50" id="upgenesets"></textarea><br>
 						
@@ -955,10 +1099,14 @@
 		function radioAnalysisClick (e) {
 			if (e.target.id == "radioAnalysis1") {
 				$("#form1").hide();
-				$("#form2").show();			
+				$("#form2").show();	
+				localStorage.setItem("explore", true);
+				checkLocalStorage();		
 			} else if (e.target.id == "radioAnalysis2") {
 				$("#form2").hide();
-				$("#form1").show();	
+				$("#form1").show();
+				localStorage.setItem("explore", false);
+				checkLocalStorage();
 			} else {
 				alert("Error. Please contact W.Wei@sheffield.ac.uk");
 			}
@@ -1024,6 +1172,11 @@
 		document.getElementById("pvalueSlider").addEventListener("input", pvalueSliderInput);
 		
 		function displayResults (){
+            localStorage.setItem("checkboxHeatmap", document.getElementById("checkboxHeatmap").checked);
+            localStorage.setItem("checkboxNetwork", document.getElementById("checkboxNetwork").checked);
+            localStorage.setItem("checkboxGeneList", document.getElementById("checkboxGeneList").checked);
+            localStorage.setItem("checkboxNetworkLegend", document.getElementById("checkboxNetworkLegend").checked);
+            localStorage.setItem("checkboxCorrelationTable", document.getElementById("checkboxCorrelationTable").checked);
 			$("#divInput").find('*').hide();
 			$("#divInput").hide();
 			$("#divShareButtons").hide();
@@ -1091,6 +1244,7 @@
 				$("#divSliders").children().hide();
 				$("#divSliders").hide();
 			}
+            localStorage.setItem("checkboxCorrelationTable", document.getElementById("checkboxCorrelationTable").checked);
 		}
 		
 		document.getElementById("checkboxHeatmap").addEventListener("click", displayResults);
