@@ -64,91 +64,109 @@
 						
 			function checkLocalStorage() {
 			    var tmp = localStorage.getItem("explore");
-    			if (tmp != "") {
-        			explore = (tmp=="true");
-        			//alert(explore);
-        			if (!explore) {
-        				document.getElementById("radioAnalysis2").checked = true;
-        				tmp = localStorage.getItem("upgenesets");
-    					if (tmp != "") {
-        					$("#upgenesets").val(tmp);
-    					}
+    			if (tmp == "") {
+                    tmp=="true"
+                }
+                explore = (tmp=="true");
+                //alert(explore);
+                if (!explore) {
+                    document.getElementById("radioAnalysis2").checked = true;
+                    tmp = localStorage.getItem("upgenesets");
+    				if (tmp != "") {
+        				$("#upgenesets").val(tmp);
+    				}
     					
-    					tmp = localStorage.getItem("downgenesets");
-    					if (tmp != "") {
-        					$("#downgenesets").val(tmp);
-    					}
+    				tmp = localStorage.getItem("downgenesets");
+    				if (tmp != "") {
+        				$("#downgenesets").val(tmp);
+    				}
     					
-    					tmp = localStorage.getItem("inputTopN");
-    					if (tmp != "") {
-        					$("#inputTopN").val(tmp);
-    					}
+                    tmp = localStorage.getItem("inputTopN");
+                    if (tmp == "") {
+                        tmp=0;
+                    }
+                    $("#inputTopN").val(tmp);
     			
-    					tmp = localStorage.getItem("inputCorrelation");
-    					if (tmp != "") {
-        					$("#inputCorrelation").val(tmp);
-    					}
-    			
-    					tmp = localStorage.getItem("inputpValue");
-    					if (tmp != "") {
-        					$("#inputpValue").val(tmp);
-    					} 
-    			
-    					tmp = localStorage.getItem("selectGeneSetCollection");
-    					if (tmp != "") {
-        					$("#selectGeneSetCollection").val(tmp);
-    					} 
+                    tmp = localStorage.getItem("inputCorrelation");
+                    if (tmp == "") {
+                        tmp=0.05;
+                    }
+                    $("#inputCorrelation").val(tmp);
+
+                    tmp = localStorage.getItem("inputpValue");
+                    if (tmp == "") {
+                        tmp=0.05
+                    } 
+                    $("#inputpValue").val(tmp);
+
+                    tmp = localStorage.getItem("selectGeneSetCollection");
+                    if (tmp == "") {
+                        tmp ="MSigDBC2CP";
+                    } 
+                    $("#selectGeneSetCollection").val(tmp);
                         
-                        
-        			} else {
-        				document.getElementById("radioAnalysis1").checked = true;
-                        tmp = localStorage.getItem("inputTopN2");
-    					if (tmp != "") {
-        					$("#inputTopN2").val(tmp);
-    					}
+                } else {
+                    document.getElementById("radioAnalysis1").checked = true;
+                    tmp = localStorage.getItem("inputTopN2");
+                    if (tmp == "") {
+                        tmp=10;
+                    } 
+                    $("#inputTopN2").val(tmp);
     			
-    					tmp = localStorage.getItem("inputCorrelation2");
-    					if (tmp != "") {
-        					$("#inputCorrelation2").val(tmp);
-    					}
-    			
-    					tmp = localStorage.getItem("inputpValue2");
-    					if (tmp != "") {
-        					$("#inputpValue2").val(tmp);
-    					}
-                        
-                        var form2genesetCollection = localStorage.getItem("form2genesetCollection");
-                        var form2geneset = localStorage.getItem("form2geneset");
-    					if (form2geneset != "") {
-                            document.getElementById("radioSearchGeneSet").checked = true;
-                            $("#textfieldGeneSet").val(form2geneset);                         
-    					}
-        			}
+                    tmp = localStorage.getItem("inputCorrelation2");
+                    if (tmp == "") {
+                        tmp=0.05;
+                    } 
+                    $("#inputCorrelation2").val(tmp);
+
+                    tmp = localStorage.getItem("inputpValue2");
+                    if (tmp == "") {
+                        tmp=0.05;
+                    }
+                    $("#inputpValue2").val(tmp);
+
+                    var form2genesetCollection = localStorage.getItem("form2genesetCollection");
+                    var form2geneset = localStorage.getItem("form2geneset");
+                    if (form2geneset != "") {
+                        document.getElementById("radioSearchGeneSet").checked = true;
+                        $("#textfieldGeneSet").val(form2geneset);                         
+                    }
     			}
                 tmp = localStorage.getItem("selectClusterMethod");
-                if (tmp != "") {
-                    $("#selectClusterMethod").val(tmp);
+                if (tmp == "") {
+                    tmp="complete";
                 }
+                $("#selectClusterMethod").val(tmp);
+                
                 tmp = localStorage.getItem("checkboxHeatmap");
-                if (tmp != "") {
-                    document.getElementById("checkboxHeatmap").checked = (tmp=="true");
+                if (tmp == "") {
+                    tmp="true";
                 }
+                document.getElementById("checkboxHeatmap").checked = (tmp=="true");
+                
                 tmp = localStorage.getItem("checkboxNetwork");
-                if (tmp != "") {
-                    document.getElementById("checkboxNetwork").checked = (tmp=="true");
+                if (tmp == "") {
+                    tmp="true";
                 }
+                document.getElementById("checkboxNetwork").checked = (tmp=="true");
+                
                 tmp = localStorage.getItem("checkboxNetworkLegend");
-                if (tmp != "") {
-                    document.getElementById("checkboxNetworkLegend").checked = (tmp=="true");
+                if (tmp == "") {
+                    tmp="true";
                 }
+                document.getElementById("checkboxNetworkLegend").checked = (tmp=="true");
+                
                 tmp = localStorage.getItem("checkboxGeneList");
-                if (tmp != "") {
-                    document.getElementById("checkboxGeneList").checked = (tmp=="true");
+                if (tmp == "") {
+                    tmp="true";
                 }
+                document.getElementById("checkboxGeneList").checked = (tmp=="true");
+                
                 tmp = localStorage.getItem("checkboxCorrelationTable");
-                if (tmp != "") {
-                    document.getElementById("checkboxCorrelationTable").checked = (tmp=="true");
+                if (tmp == "") {
+                    tmp="true";
                 }
+                document.getElementById("checkboxCorrelationTable").checked = (tmp=="true");
 			}
 
             function makeCanvasFitBoxContainer(selector) {
@@ -631,8 +649,8 @@
 					}					
 				}
 			}
-
-			function send(){
+            
+            function saveSettings(){
                 localStorage.setItem("explore", document.getElementById("radioAnalysis1").checked);
 				localStorage.setItem("upgenesets", $("#upgenesets").val());
 				localStorage.setItem("downgenesets", $("#downgenesets").val());
@@ -641,7 +659,14 @@
 				localStorage.setItem("inputpValue", $("#inputpValue").val());
 				localStorage.setItem("selectGeneSetCollection", $("#selectGeneSetCollection").val());				
                 localStorage.setItem("selectClusterMethod", $("#selectClusterMethod").val());
-				
+				localStorage.setItem("inputTopN2", $("#inputTopN2").val());
+                localStorage.setItem("inputCorrelation2", $("#inputCorrelation2").val());
+				localStorage.setItem("inputpValue2", $("#inputpValue2").val());
+                localStorage.setItem("form2genesetCollection", $('input:radio[name=form2geneset]:checked').val());            
+            }
+
+			function send(){
+                saveSettings();				
                 var upVal = $("#upgenesets").val();
 				var downVal = $("#downgenesets").val();
 				var newTopNValue = $("#inputTopN").val();
@@ -688,13 +713,7 @@
 			};
 			
 			function sendForm2(){
-                localStorage.setItem("explore", document.getElementById("radioAnalysis1").checked);
-				localStorage.setItem("inputTopN2", $("#inputTopN2").val());
-                localStorage.setItem("inputCorrelation2", $("#inputCorrelation2").val());
-				localStorage.setItem("inputpValue2", $("#inputpValue2").val());
-                localStorage.setItem("form2genesetCollection", $('input:radio[name=form2geneset]:checked').val());
-                
-                //localStorage.removeItem("topNValue");                	
+                saveSettings();               	
 				var form2genesetCollection = $('input:radio[name=form2geneset]:checked').val();
                 var form2geneset="";
 
