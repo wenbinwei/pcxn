@@ -63,8 +63,9 @@
             }
 						
 			function checkLocalStorage() {
+                //localStorage.clear();
 			    var tmp = localStorage.getItem("explore");
-    			if (tmp == "") {
+    			if (tmp===null) {
                     tmp=="true"
                 }
                 explore = (tmp=="true");
@@ -72,35 +73,35 @@
                 if (!explore) {
                     document.getElementById("radioAnalysis2").checked = true;
                     tmp = localStorage.getItem("upgenesets");
-    				if (tmp != "") {
+    				if (tmp !== null) {
         				$("#upgenesets").val(tmp);
     				}
     					
     				tmp = localStorage.getItem("downgenesets");
-    				if (tmp != "") {
+    				if (tmp !== null) {
         				$("#downgenesets").val(tmp);
     				}
     					
                     tmp = localStorage.getItem("inputTopN");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp=0;
                     }
                     $("#inputTopN").val(tmp);
     			
                     tmp = localStorage.getItem("inputCorrelation");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp=0.05;
                     }
                     $("#inputCorrelation").val(tmp);
 
                     tmp = localStorage.getItem("inputpValue");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp=0.05
                     } 
                     $("#inputpValue").val(tmp);
 
                     tmp = localStorage.getItem("selectGeneSetCollection");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp ="MSigDBC2CP";
                     } 
                     $("#selectGeneSetCollection").val(tmp);
@@ -108,19 +109,19 @@
                 } else {
                     document.getElementById("radioAnalysis1").checked = true;
                     tmp = localStorage.getItem("inputTopN2");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp=10;
                     } 
                     $("#inputTopN2").val(tmp);
     			
                     tmp = localStorage.getItem("inputCorrelation2");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp=0.05;
                     } 
                     $("#inputCorrelation2").val(tmp);
 
                     tmp = localStorage.getItem("inputpValue2");
-                    if (tmp == "") {
+                    if (tmp===null) {
                         tmp=0.05;
                     }
                     $("#inputpValue2").val(tmp);
@@ -133,37 +134,37 @@
                     }
     			}
                 tmp = localStorage.getItem("selectClusterMethod");
-                if (tmp == "") {
+                if (tmp===null) {
                     tmp="complete";
                 }
                 $("#selectClusterMethod").val(tmp);
                 
                 tmp = localStorage.getItem("checkboxHeatmap");
-                if (tmp == "") {
+                if (tmp===null) {
                     tmp="true";
                 }
                 document.getElementById("checkboxHeatmap").checked = (tmp=="true");
                 
                 tmp = localStorage.getItem("checkboxNetwork");
-                if (tmp == "") {
+                if (tmp===null) {
                     tmp="true";
                 }
                 document.getElementById("checkboxNetwork").checked = (tmp=="true");
                 
                 tmp = localStorage.getItem("checkboxNetworkLegend");
-                if (tmp == "") {
+                if (tmp===null) {
                     tmp="true";
                 }
                 document.getElementById("checkboxNetworkLegend").checked = (tmp=="true");
                 
                 tmp = localStorage.getItem("checkboxGeneList");
-                if (tmp == "") {
+                if (tmp===null) {
                     tmp="true";
                 }
                 document.getElementById("checkboxGeneList").checked = (tmp=="true");
                 
                 tmp = localStorage.getItem("checkboxCorrelationTable");
-                if (tmp == "") {
+                if (tmp===null) {
                     tmp="true";
                 }
                 document.getElementById("checkboxCorrelationTable").checked = (tmp=="true");
