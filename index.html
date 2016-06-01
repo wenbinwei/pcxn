@@ -317,11 +317,11 @@
 				//alert(form1Response[0][0]);
 				outputGenesetNames.sort();
 				//alert("The geneset names are:" + outputGenesetNames);
-				var partialCorrelationMatrix = [];
+				var correlationMatrix = [];
 				for(var i = 0; i < outputGenesetNames.length; ++i){
-					partialCorrelationMatrix[i] = [];
+					correlationMatrix[i] = [];
 					for (var j = 0; j < outputGenesetNames.length; ++j){
-						partialCorrelationMatrix[i][j] = 0;
+						correlationMatrix[i][j] = 0;
 					}
 				}
 				
@@ -335,13 +335,13 @@
 							indexB = i;
 						}
 					}
-					partialCorrelationMatrix[indexA][indexB] = form1Response[k][2];
-					partialCorrelationMatrix[indexB][indexA] = form1Response[k][2];
+					correlationMatrix[indexA][indexB] = form1Response[k][2];
+					correlationMatrix[indexB][indexA] = form1Response[k][2];
 					if(form1Response[k][2] < minCorrInHeatmap){minCorrInHeatmap = form1Response[k][2];}
 					if(form1Response[k][2] > maxCorrInHeatmap){maxCorrInHeatmap = form1Response[k][2];}
-					var partialCor = form1Response[k][2];
+					var shrinkCor = form1Response[k][2];
 					var pValue = form1Response[k][3];
-					if (Math.abs(partialCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(partialCor);}
+					if (Math.abs(shrinkCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(shrinkCor);}
 					if (pValue < minPValueInResponse) {minPValueInResponse = pValue;}
 				}
 
@@ -361,7 +361,7 @@
 						"y": {
 							"vars": outputGenesetNames,
 							"smps": outputGenesetNames,
-							"data": partialCorrelationMatrix
+							"data": correlationMatrix
 						}
 					}, 
 					{
@@ -433,18 +433,18 @@
 				var edges = new Array();
 				var edgeIndex = 0;
 				for(var k = 0; k < form1Response.length; ++k){
-					var partialCor = form1Response[k][2];
+					var shrinkCor = form1Response[k][2];
 					var pValue = form1Response[k][3];
-					if ( (Math.abs(partialCor) > corrCutOffValue) && (pValue < pCutOffValue) ) {
+					if ( (Math.abs(shrinkCor) > corrCutOffValue) && (pValue < pCutOffValue) ) {
 						tableData[edgeIndex] = form1Response[k];
-						//var lineWidth = Math.abs(3*partialCor) + 1;
+						//var lineWidth = Math.abs(3*shrinkCor) + 1;
 						var lineWidth = 1;
 						edges[edgeIndex] = {"id1" : form1Response[k][0],
 							"id2" : form1Response[k][1],
-							"color" : getHeatmapColor(0-maxCorrInResponse, maxCorrInResponse, partialCor),
+							"color" : getHeatmapColor(0-maxCorrInResponse, maxCorrInResponse, shrinkCor),
 							"type" : "line",
 							"width" : lineWidth,
-							"value": partialCor};
+							"value": shrinkCor};
 						
 						if(!inNetwork.hasOwnProperty(form1Response[k][0])) {
 							inNetwork[form1Response[k][0]] = 1;
@@ -704,7 +704,7 @@
 					$(".result").hide();
 					//$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("getPartialCorrelation.jsp", parms).done(handleForm1Response);
+					$.getJSON("getCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
@@ -764,7 +764,7 @@
 					$(".result").hide();
 					//$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("getPartialCorrelation.jsp", parms).done(handleForm1Response);
+					$.getJSON("getCorrelation.jsp", parms).done(handleForm1Response);
 				} else {
 					//alert("You have not changed parameters!")
 					handleForm1Response(form1Response);
