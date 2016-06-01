@@ -5,7 +5,7 @@
 		<meta property="og:url"                content="http://pcxn.org:8080/index.html" />
 		<meta property="og:type"               content="website" />
 		<meta property="og:title"              content="PCxN The Pathway Co-Activity Map" />
-		<meta property="og:description"        content="A database for partial correlation of pathways/gene sets" />
+		<meta property="og:description"        content="A database for correlation of pathways/gene sets" />
 		<meta property="og:image"              content="http://pcxn.org:8080/pcxnscreenshot1.png" />
 		<script src="/canvasxpress/js/canvasXpress.min.js"></script>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"/>
@@ -889,7 +889,7 @@
 					</form>
 					
 					<form id="form1" name="form1" class="well">
-						<label for="upgenesets">Find partial correlation among gene sets up-regulated in phenotype 0</label><br>
+						<label for="upgenesets">Find correlation among gene sets up-regulated in phenotype 0</label><br>
 						<textarea rows="7" cols="50" id="upgenesets"></textarea><br>
 						
 						<label for="downgenesets">and gene sets up-regulated in phenotype 1 </label><br>
@@ -948,15 +948,15 @@
 			</div>
 			<div class="row" id="divShareButtons">
 				<label>Share PCxN</label>
-				<a class="sbg-button sbg-button-facebook"  data-sbg-network="facebook"  data-sbg-url="http://pcxn.org:8080"  data-sbg-title="PCxN The Pathway Co-Activity Map"  data-sbg-summary="A database of partial correlation between pathways/gene sets."  data-sbg-image="http://pcxn.org:8080/pcxnscreenshot1.png"  data-sbg-width="600"  data-sbg-height="368" >
+				<a class="sbg-button sbg-button-facebook"  data-sbg-network="facebook"  data-sbg-url="http://pcxn.org:8080"  data-sbg-title="PCxN The Pathway Co-Activity Map"  data-sbg-summary="A database of correlation between pathways/gene sets."  data-sbg-image="http://pcxn.org:8080/pcxnscreenshot1.png"  data-sbg-width="600"  data-sbg-height="368" >
   					<i class="sbg-button-icon fa fa-facebook"></i>
 				</a>
       
-				<a class="sbg-button sbg-button-twitter"  data-sbg-network="twitter"  data-sbg-text="http://pcxn.org A database of partial correlation between pathways and gene sets."  data-sbg-via=""  data-sbg-hashtags="pathway,geneset"  data-sbg-width="600"  data-sbg-height="258" >
+				<a class="sbg-button sbg-button-twitter"  data-sbg-network="twitter"  data-sbg-text="http://pcxn.org A database of correlation between pathways and gene sets."  data-sbg-via=""  data-sbg-hashtags="pathway,geneset"  data-sbg-width="600"  data-sbg-height="258" >
   					<i class="sbg-button-icon fa fa-twitter"></i>
 				</a>
       
-				<a class="sbg-button sbg-button-linkedin"  data-sbg-network="linkedin"  data-sbg-url="http://pcxn.org:8080"  data-sbg-title="PCxN The Pathway Co-Activity Map"  data-sbg-source=""  data-sbg-summary="A database of partial correlation between pathways/gene sets."  data-sbg-width="585"  data-sbg-height="471" >
+				<a class="sbg-button sbg-button-linkedin"  data-sbg-network="linkedin"  data-sbg-url="http://pcxn.org:8080"  data-sbg-title="PCxN The Pathway Co-Activity Map"  data-sbg-source=""  data-sbg-summary="A database of correlation between pathways/gene sets."  data-sbg-width="585"  data-sbg-height="471" >
   					<i class="sbg-button-icon fa fa-linkedin"></i>
 				</a>
       
@@ -964,11 +964,11 @@
   					<i class="sbg-button-icon fa fa-google-plus"></i>
 				</a>
       
-				<a class="sbg-button sbg-button-pinterest"  data-sbg-network="pinterest"  data-sbg-url="http://pcxn.org"  data-sbg-media="http://pcxn.org/pcxnscreenshot1.png"  data-sbg-description="A database of partial correlation between pathways/gene sets."  data-sbg-width="750"  data-sbg-height="322" >
+				<a class="sbg-button sbg-button-pinterest"  data-sbg-network="pinterest"  data-sbg-url="http://pcxn.org"  data-sbg-media="http://pcxn.org/pcxnscreenshot1.png"  data-sbg-description="A database of correlation between pathways/gene sets."  data-sbg-width="750"  data-sbg-height="322" >
   					<i class="sbg-button-icon fa fa-pinterest"></i>
 				</a>
       
-				<a class="sbg-button sbg-button-email"  data-sbg-network="email"  data-sbg-subject="PCxN The Pathway Co-Activity Map"  data-sbg-body="A database of partial correlation between pathways/gene sets, http://pcxn.org" >
+				<a class="sbg-button sbg-button-email"  data-sbg-network="email"  data-sbg-subject="PCxN The Pathway Co-Activity Map"  data-sbg-body="A database of correlation between pathways/gene sets, http://pcxn.org" >
   					<i class="sbg-button-icon fa fa-envelope"></i>
 				</a>
 				<script>
@@ -993,7 +993,7 @@
 						<div class="col-sm-6 result box" id="divHeatmap">
 							<!-- The "box" class here is used to find the right DIV when resizing.
                          	See sizeCanvas() -->
-							<label>Partial Correlation Heatmap</label>
+							<label>Correlation Heatmap</label>
 							<input type="button" id="buttonpng1" value="PNG" onclick="saveHeatmapAsPNG();"/><br>
                         	<!-- This div gets replaced by sizeCanvas() -->
                         	<div>
@@ -1001,7 +1001,7 @@
                         	</div>
 						</div>
 						<div class="col-sm-6 result row" style="padding-left: 30px;" id="divNetowrk">
-							<label class="result" id="netWorkHeadLabel">Partial Correlation Network</label>
+							<label class="result" id="netWorkHeadLabel">Correlation Network</label>
 							<input type="button" id="buttonpng2" value="PNG" onclick="saveNetworkAsPNG();"/><br>
 							<div class="col-sm-12 row result box">
                         		<div class="result row">
@@ -1064,7 +1064,7 @@
 										<tr class="result">
 											<th class="result">Gene Set A</th>
 											<th class="result">Gene Set B</th>
-											<th class="result">Partial Correlation</th>
+											<th class="result">Correlation</th>
 											<th class="result">p Value</th>
 											<th class="result">Overlap Coefficient</th>
 										</tr>
@@ -1074,7 +1074,7 @@
 										<tr class="result">
 											<th class="result">Gene Set A</th>
 											<th class="result">Gene Set B</th>
-											<th class="result">Partial Correlation</th>
+											<th class="result">Correlation</th>
 											<th class="result">p Value</th>
 											<th class="result">Overlap Coefficient</th>
 										</tr>
