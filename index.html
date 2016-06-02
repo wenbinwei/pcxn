@@ -43,7 +43,11 @@
 			var explore = true;
 			
 			$(document).ready(function(){
-				checkLocalStorage();
+				var tmp = localStorage.getItem("explore");
+    			if (tmp===null) {
+                    tmp=="true"
+                }
+                explore = (tmp=="true");
                 sizeCanvas();
                 if(explore) {
 					$("#form1").hide();
@@ -54,14 +58,6 @@
     			var parms = {geneSetCollection :"all"};
 				$.getJSON("getAvailableGeneSets.jsp", parms).done(handleAvailableGeneSetsResponse);
 			});
-            
-            function set_matching_word(selectObj, word) {
-                for(var i = 0; i < selectObj.length; i++) {
-                    if(selectObj.options[i].value == word)
-                      alert(i);
-                      selectObj.selectedIndex = i;
-                }
-            }
 						
 			function checkLocalStorage() {
                 //localStorage.clear();
@@ -127,10 +123,25 @@
                     }
                     $("#inputpValue2").val(tmp);
 
+                    var form2genesetCollection = localStorage.getItem("form2genesetCollection");
                     var form2geneset = localStorage.getItem("form2geneset");
-                    if (form2geneset !== null) {
-                        document.getElementById("radioSearchGeneSet").checked = true;
-                        $("#textfieldGeneSet").val(form2geneset);                         
+                    if (form2genesetCollection !== null & form2geneset !== null) {
+                        if (form2genesetCollection == "radioMSigDBH") {
+                            document.getElementById("radioMSigDBH").checked = true;
+                            $("#selectMSigDBH").val(form2geneset); 
+                        } else if (form2genesetCollection == "radioMSigDBC2CP") {
+                            document.getElementById("radioMSigDBC2CP").checked = true;
+                            $("#selectMSigDBC2CP").val(form2geneset); 
+                        } else if (form2genesetCollection == "radioMSigDBC5") {
+                            document.getElementById("radioMSigDBC5").checked = true;
+                            $("#selectMSigDBC5").val(form2geneset); 
+                        } else if (form2genesetCollection == "radioPathprint") {
+                            document.getElementById("radioPathprint").checked = true;
+                            $("#selectPathprint").val(form2geneset); 
+                        } else if (form2genesetCollection == "radioSearchGeneSet") {
+                            document.getElementById("radioSearchGeneSet").checked = true;
+                            $("#textfieldGeneSet").val(form2geneset); 
+                        }
                     }
     			}
                 tmp = localStorage.getItem("selectClusterMethod");
@@ -269,7 +280,8 @@
          				.append($("<option></option>")
          				.attr("value",mSigDBHGeneSets[i])
          				.text(mSigDBHGeneSets[i])); 
-				} 
+				}
+                checkLocalStorage();
 			}
 			
 			getHeatmapColor = function(d, c, e) {
@@ -676,7 +688,8 @@
                 localStorage.setItem("selectClusterMethod", $("#selectClusterMethod").val());
 				localStorage.setItem("inputTopN2", $("#inputTopN2").val());
                 localStorage.setItem("inputCorrelation2", $("#inputCorrelation2").val());
-				localStorage.setItem("inputpValue2", $("#inputpValue2").val());          
+				localStorage.setItem("inputpValue2", $("#inputpValue2").val());
+                localStorage.setItem("form2genesetCollection", $('input:radio[name=form2geneset]:checked').val()); 
             }
 
 			function send(){
@@ -899,7 +912,7 @@
 						</select>
 						
 						<br>
-						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="searchGeneSet">Search a gene set 
+						<input type="radio" id="radioSearchGeneSet" name="form2geneset" value="radioSearchGeneSet">Search a gene set 
 						<input id="textfieldGeneSet" onkeypress="hideOptionsAndResults()">																
 						<br>																	
 						<label id="label1" for="inputCorrelation2"> with absolute correlation coefficient greater than</label><br>
