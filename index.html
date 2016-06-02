@@ -32,6 +32,7 @@
 			var pathprintGeneSets = [];
 			var mSigDBC2CPGeneSets = [];
 			var mSigDBC5GeneSets = [];
+            var mSigDBHGeneSets = [];
 			var maxCorrInResponse = 0;
 			var minPValueInResponse = 1;
 			var minCorrInHeatmap = 0;
@@ -212,9 +213,11 @@
 				pathprintGeneSets = response.pathprint;
 				mSigDBC2CPGeneSets = response.MSigDBC2CP;
 				mSigDBC5GeneSets = response.MSigDBC5;
+                mSigDBHGeneSets = response.MSigDBH;
 				
 				var availableGenesets = pathprintGeneSets.concat(mSigDBC2CPGeneSets);
 				availableGenesets = availableGenesets.concat(mSigDBC5GeneSets);
+                availableGenesets = availableGenesets.concat(mSigDBHGeneSets);
 				//alert(availableGenesets.length);
 				$( "#textfieldGeneSet" ).autocomplete({
       				source: availableGenesets
@@ -254,7 +257,19 @@
          				.append($("<option></option>")
          				.attr("value",mSigDBC5GeneSets[i])
          				.text(mSigDBC5GeneSets[i])); 
-				} 				
+				}
+                
+                mSigDBHGeneSets = mSigDBHGeneSets.sort();
+				$('#selectMSigDBH')
+         			.append($("<option></option>")
+         			.attr("value","")
+         			.text("")); 
+    			for(var i = 0; i < mSigDBHGeneSets.length; ++i){
+					$('#selectMSigDBH')
+         				.append($("<option></option>")
+         				.attr("value",mSigDBHGeneSets[i])
+         				.text(mSigDBHGeneSets[i])); 
+				} 
 			}
 			
 			getHeatmapColor = function(d, c, e) {
@@ -722,6 +737,8 @@
 					form2geneset=$('#selectMSigDBC2CP').val();
 				} else if (form2genesetCollection == "radioMSigDBC5") {
 					form2geneset=$('#selectMSigDBC5').val();
+				} else if (form2genesetCollection == "radioMSigDBH") {
+					form2geneset=$('#selectMSigDBH').val();
 				} else {
 					form2geneset=$('#textfieldGeneSet').val();
 				}
@@ -738,6 +755,9 @@
 				}
 				else if(pathprintGeneSets.indexOf(newGeneSetsValue) >=0) {
 					newGeneSetCollectionValue = "pathprint";
+				}
+                else if(mSigDBHGeneSets.indexOf(newGeneSetsValue) >=0) {
+					newGeneSetCollectionValue = "MSigDBH";
 				}
 				else {
 					alert("Your gene set is not in the database");
@@ -860,7 +880,11 @@
 					<form id="form2" name="form2" class="well">						
 						<label for="inputTopN2">Find top</label>
 						<input type="text" id="inputTopN2" value="10"/><label>gene sets</label><br>
-						<label>Correlated with</label><br>						
+						<label>Correlated with</label><br>	
+                        <input type="radio" id="radioMSigDBH" name="form2geneset" value="radioMSigDBH" checked>Select a gene set from MSigDB H (Hallmark gene sets)						    
+						<br>
+						<select id="selectMSigDBH" size="1">
+						</select><br>
 						<input type="radio" id="radioMSigDBC2CP" name="form2geneset" value="radioMSigDBC2CP" checked>Select a gene set from MSigDB C2 CP (Canonical pathways)						    
 						<br>
 						<select id="selectMSigDBC2CP" size="1">
@@ -907,7 +931,8 @@
 						<label for="selectGeneSetCollection">The gene sets are from</label>
 						<select id="selectGeneSetCollection" size="1">
 							<option value="pathprint">Pathprint</option>
-						    <option value="MSigDBC2CP" selected="selected">MSigDB C2 CP (Canonical pathways)</option>
+                            <option value="MSigDBH" selected="selected">MSigDB H (Hallmark gene sets)</option>
+						    <option value="MSigDBC2CP">MSigDB C2 CP (Canonical pathways)</option>
 						    <option value="MSigDBC5">MSigDB C5 (GO gene sets)</option>
 						</select>
 						<br>
@@ -1029,7 +1054,7 @@
 						<p class="result" id="selctedLeafName"> </p>
 						<label>External links</label><br>
 						<a id="selctedLeafNameLink" target="_blank" href=""></a>
-						<label>Members on HG-U133 Plus2 array</label><br>
+						<br><label>Members</label><br>
 						<table id="table2" class="display" cellspacing="0" width="100%">
 							<thead>
 								<tr>
@@ -1097,6 +1122,8 @@
 				document.getElementById("radioMSigDBC2CP").checked = true;
 			} else if(e.target.id =="selectMSigDBC5") {
 				document.getElementById("radioMSigDBC5").checked = true;
+			} else if(e.target.id =="selectMSigDBH") {
+				document.getElementById("radioMSigDBH").checked = true;
 			} else {}
 			$("#label1").show();
 			$("#inputCorrelation2").show();
@@ -1113,6 +1140,7 @@
 		document.getElementById("selectPathprint").addEventListener("change", changeRadioSelection);
 		document.getElementById("selectMSigDBC2CP").addEventListener("change", changeRadioSelection);
 		document.getElementById("selectMSigDBC5").addEventListener("change", changeRadioSelection);	
+        document.getElementById("selectMSigDBH").addEventListener("change", changeRadioSelection);	
 		
 		function radioAnalysisClick (e) {
 			if (e.target.id == "radioAnalysis1") {
@@ -1150,6 +1178,7 @@
 		document.getElementById("radioPathprint").addEventListener("click", form2RadioClick);
 		document.getElementById("radioMSigDBC2CP").addEventListener("click", form2RadioClick);
 		document.getElementById("radioMSigDBC5").addEventListener("click", form2RadioClick);
+        document.getElementById("radioMSigDBH").addEventListener("click", form2RadioClick);
 		document.getElementById("radioSearchGeneSet").addEventListener("click", form2RadioClick);
 		
 		function coefficientSliderChange (e) {

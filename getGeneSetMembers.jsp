@@ -21,6 +21,8 @@
 		tblName = "msigdb_c2_cp_geneset_tbl";
 	} else if (geneSetCollectionValue.equals("MSigDBC5")) {
 		tblName = "msigdb_c5_go_geneset_tbl";
+	} else if (geneSetCollectionValue.equals("MSigDBH")) {
+		tblName = "msigdb_h_hallmark_geneset_tbl";
 	} else {
 		tblName = null;
 	}

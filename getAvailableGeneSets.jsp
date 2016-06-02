@@ -38,7 +38,7 @@
 	Connection conn = null;
 	Statement stmt = null;
 	JSONObject obj=new JSONObject();
-	String [] genesetdbs = {"pathprint", "MSigDBC2CP", "MSigDBC5" }; 	
+	String [] genesetdbs = {"pathprint", "MSigDBC2CP", "MSigDBC5", "MSigDBH"}; 	
 	int size = genesetdbs.length;
     for (int i=0; i<size; i++)
     {        

@@ -69,7 +69,8 @@ body {
 #textfieldGeneSet, 
 #selectPathprint,
 #selectMSigDBC2CP,
-#selectMSigDBC5 {
+#selectMSigDBC5,
+#selectMSigDBH {
 	width: 500px;
 }
 
