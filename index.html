@@ -23,7 +23,7 @@
 		<script type="text/javascript">
 			var pCutOffValue = 0.05;
 			var topNValue = 0;
-			var form1Response;
+			var formResponse;
 			var geneSetsValue;
 			var	corrCutOffValue = 0.05;
 			var	geneSetCollectionValue;
@@ -290,24 +290,24 @@
         		return heatmapColors[Math.max(0, Math.min(heatmapColors.length - 1, a))]
     		};
 			
-			function handleForm1Response(response) {				
+			function handleFormResponse(response) {				
 				// Get unique geneset names
 				if(!response) return;
-				form1Response = response;
-				if (form1Response.length==0){
+				formResponse = response;
+				if (formResponse.length==0){
 					alert("None of your gene set names match those in the current database. The database is still in development. Please contact W.Wei@sheffield.ac.uk to help the development of the database.");
 					return;
 				}
 				
 				var u = {}, outputGenesetNames = [];
-				for(var i = 0; i < form1Response.length; ++i){
-					if(!u.hasOwnProperty(form1Response[i][0])) {
-						outputGenesetNames.push(form1Response[i][0]);
-						u[form1Response[i][0]] = 1;
+				for(var i = 0; i < formResponse.length; ++i){
+					if(!u.hasOwnProperty(formResponse[i][0])) {
+						outputGenesetNames.push(formResponse[i][0]);
+						u[formResponse[i][0]] = 1;
 					}
-					if(!u.hasOwnProperty(form1Response[i][1])) {
-						outputGenesetNames.push(form1Response[i][1]);
-						u[form1Response[i][1]] = 1;
+					if(!u.hasOwnProperty(formResponse[i][1])) {
+						outputGenesetNames.push(formResponse[i][1]);
+						u[formResponse[i][1]] = 1;
 					}
 				}
 				
@@ -340,8 +340,8 @@
 				
 				displayResults ();				
 				//$("#table2waiting").hide();
-				//alert(form1Response[0]);
-				//alert(form1Response[0][0]);
+				//alert(formResponse[0]);
+				//alert(formResponse[0][0]);
 				outputGenesetNames.sort();
 				//alert("The geneset names are:" + outputGenesetNames);
 				var correlationMatrix = [];
@@ -352,22 +352,22 @@
 					}
 				}
 				
-				for(var k = 0; k < form1Response.length; ++k){
+				for(var k = 0; k < formResponse.length; ++k){
 					var indexA, indexB;
 					for (var i = 0; i < outputGenesetNames.length; ++i){
-						if(form1Response[k][0] == outputGenesetNames[i]) {
+						if(formResponse[k][0] == outputGenesetNames[i]) {
 							indexA = i;
 						}
-						if(form1Response[k][1] == outputGenesetNames[i]) {
+						if(formResponse[k][1] == outputGenesetNames[i]) {
 							indexB = i;
 						}
 					}
-					correlationMatrix[indexA][indexB] = form1Response[k][2];
-					correlationMatrix[indexB][indexA] = form1Response[k][2];
-					if(form1Response[k][2] < minCorrInHeatmap){minCorrInHeatmap = form1Response[k][2];}
-					if(form1Response[k][2] > maxCorrInHeatmap){maxCorrInHeatmap = form1Response[k][2];}
-					var shrinkCor = form1Response[k][2];
-					var pValue = form1Response[k][3];
+					correlationMatrix[indexA][indexB] = formResponse[k][2];
+					correlationMatrix[indexB][indexA] = formResponse[k][2];
+					if(formResponse[k][2] < minCorrInHeatmap){minCorrInHeatmap = formResponse[k][2];}
+					if(formResponse[k][2] > maxCorrInHeatmap){maxCorrInHeatmap = formResponse[k][2];}
+					var shrinkCor = formResponse[k][2];
+					var pValue = formResponse[k][3];
 					if (Math.abs(shrinkCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(shrinkCor);}
 					if (pValue < minPValueInResponse) {minPValueInResponse = pValue;}
 				}
@@ -459,26 +459,26 @@
 				var tableData = new Array();
 				var edges = new Array();
 				var edgeIndex = 0;
-				for(var k = 0; k < form1Response.length; ++k){
-					var shrinkCor = form1Response[k][2];
-					var pValue = form1Response[k][3];
+				for(var k = 0; k < formResponse.length; ++k){
+					var shrinkCor = formResponse[k][2];
+					var pValue = formResponse[k][3];
 					if ( (Math.abs(shrinkCor) > corrCutOffValue) && (pValue < pCutOffValue) ) {
-						tableData[edgeIndex] = form1Response[k];
+						tableData[edgeIndex] = formResponse[k];
 						//var lineWidth = Math.abs(3*shrinkCor) + 1;
 						var lineWidth = 1;
-						edges[edgeIndex] = {"id1" : form1Response[k][0],
-							"id2" : form1Response[k][1],
+						edges[edgeIndex] = {"id1" : formResponse[k][0],
+							"id2" : formResponse[k][1],
 							"color" : getHeatmapColor(0-maxCorrInResponse, maxCorrInResponse, shrinkCor),
 							"type" : "line",
 							"width" : lineWidth,
 							"value": shrinkCor};
 						
-						if(!inNetwork.hasOwnProperty(form1Response[k][0])) {
-							inNetwork[form1Response[k][0]] = 1;
+						if(!inNetwork.hasOwnProperty(formResponse[k][0])) {
+							inNetwork[formResponse[k][0]] = 1;
 						}
 						
-						if(!inNetwork.hasOwnProperty(form1Response[k][1])) {
-							inNetwork[form1Response[k][1]] = 1;
+						if(!inNetwork.hasOwnProperty(formResponse[k][1])) {
+							inNetwork[formResponse[k][1]] = 1;
 						}
 						edgeIndex++;
 					}					
@@ -732,10 +732,10 @@
 					$(".result").hide();
 					//$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("getCorrelation.jsp", parms).done(handleForm1Response);
+					$.getJSON("getCorrelation.jsp", parms).done(handleFormResponse);
 				} else {
 					//alert("You have not changed parameters!")
-					handleForm1Response(form1Response);
+					handleFormResponse(formResponse);
 				}
 			};
 			
@@ -797,10 +797,10 @@
 					$(".result").hide();
 					//$("#divResult").find('*').hide();
 					var parms = {genesets : geneSetsValue, topN : topNValue , pCutOff : pCutOffValue, corrCutOff : corrCutOffValue, geneSetCollection :geneSetCollectionValue};
-					$.getJSON("getCorrelation.jsp", parms).done(handleForm1Response);
+					$.getJSON("getCorrelation.jsp", parms).done(handleFormResponse);
 				} else {
 					//alert("You have not changed parameters!")
-					handleForm1Response(form1Response);
+					handleFormResponse(formResponse);
 				}
 			};
 			
@@ -845,7 +845,7 @@
 			
 			function doneResizing() {
 				//alert("I'm done resizing for the moment");
-				handleForm1Response(form1Response);
+				handleFormResponse(formResponse);
 			};
 			
 			function hideOptionsAndResults() {
@@ -1207,7 +1207,7 @@
 			$("#inputCorrelation").val($("#coefficientSlider").val());
 			//javascript:send();
 			corrCutOffValue = $("#coefficientSlider").val();
-			handleForm1Response(form1Response);				
+			handleFormResponse(formResponse);				
 		}
 		
 		function coefficientSliderInput (e) {
@@ -1222,7 +1222,7 @@
 			$("#inputpValue").val($("#pvalueSlider").val());				
 			//javascript:send();
 			pCutOffValue =$("#pvalueSlider").val();
-			handleForm1Response(form1Response);				
+			handleFormResponse(formResponse);				
 		}
 		
 		function pvalueSliderInput (e) {
@@ -1299,7 +1299,7 @@
 		
 		function checkboxNetworkClick (e) {
 			if (document.getElementById("checkboxNetwork").checked) {
-				handleForm1Response(form1Response);			
+				handleFormResponse(formResponse);			
 			} else {
 				$("#divNetowrk").children().hide();
 				$("#divNetowrk").hide();
