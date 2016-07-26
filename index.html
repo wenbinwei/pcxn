@@ -29,6 +29,7 @@
 			var	geneSetCollectionValue;
 			var upGenesetNames = [];
 			var downGenesetNames = [];
+			var form2geneset="";
 			var pathprintGeneSets = [];
 			var mSigDBC2CPGeneSets = [];
 			var mSigDBC5GeneSets = [];
@@ -124,7 +125,7 @@
                     $("#inputpValue2").val(tmp);
 
                     var form2genesetCollection = localStorage.getItem("form2genesetCollection");
-                    var form2geneset = localStorage.getItem("form2geneset");
+                    form2geneset = localStorage.getItem("form2geneset");
                     if (form2genesetCollection !== null & form2geneset !== null) {
                         if (form2genesetCollection == "radioMSigDBH") {
                             document.getElementById("radioMSigDBH").checked = true;
@@ -487,8 +488,8 @@
 				//console.log(edges);
 				for(var i = 0; i < outputGenesetNames.length; ++i){
 					if (inNetwork.hasOwnProperty(outputGenesetNames[i])) {
-                    	var newNode
-						if($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0) ) {
+                    	var newNode;
+						if((form2geneset.toUpperCase()==outputGenesetNames[i].toUpperCase())| ($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0)) ) {
                         	// Member of the up-regulated geneset
 							newNode = {"id": outputGenesetNames[i], "color" : "rgb(200,200,200)", "shape" : "sphere"};
 						} else if($("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
@@ -568,7 +569,7 @@
 				ctx.fillStyle='black';
 				ctx.fillText("Network legend", 20, 45);
 				var nodeLegedRadius = 10;
-				if ((upGenesetNames.length + downGenesetNames)==1){					
+				if (explore){					
 					ctx.strokeStyle = "rgb(100,100,100)";
 					ctx.fillStyle="rgb(100,100,100)";
 					ctx.beginPath();
@@ -742,7 +743,7 @@
 			function sendForm2(){
                 saveSettings();               	
 				var form2genesetCollection = $('input:radio[name=form2geneset]:checked').val();
-                var form2geneset="";
+                //var form2geneset="";
 
 				if(form2genesetCollection =="radioPathprint") {
 					form2geneset= $('#selectPathprint').val();
