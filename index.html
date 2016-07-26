@@ -36,6 +36,8 @@
             var mSigDBHGeneSets = [];
 			var maxCorrInResponse = 0;
 			var minPValueInResponse = 1;
+			var maxCorrInResponseWithQuery = 0;
+			var minPValueInResponseWithQuery = 1;
 			var minCorrInHeatmap = 0;
 			var maxCorrInHeatmap = 0;
 			var heatmapColors = [];
@@ -371,10 +373,42 @@
 					var pValue = formResponse[k][3];
 					if (Math.abs(shrinkCor) > maxCorrInResponse) {maxCorrInResponse = Math.abs(shrinkCor);}
 					if (pValue < minPValueInResponse) {minPValueInResponse = pValue;}
+					if (
+							(
+								explore && 
+								(	
+									(formResponse[k][0].toUpperCase() == form2geneset.toUpperCase()) ||
+									(formResponse[k][1].toUpperCase() == form2geneset.toUpperCase()) 
+								)
+							)|| 
+							(
+								(!explore) && 
+								(
+									(
+										$("#upgenesets").val() && 
+										(
+											(upGenesetNames.indexOf(formResponse[k][0].toUpperCase()) >= 0) || 
+											(upGenesetNames.indexOf(formResponse[k][1].toUpperCase()) >= 0)
+										)
+									) ||								
+									(	
+										$("#downgenesets").val() && 
+										(
+											(downGenesetNames.indexOf(formResponse[k][0].toUpperCase()) >=0) ||
+											(downGenesetNames.indexOf(formResponse[k][1].toUpperCase()) >=0)
+										) 
+									)
+								)
+							)
+						)
+					{
+						if (Math.abs(shrinkCor) > maxCorrInResponseWithQuery) {maxCorrInResponseWithQuery = Math.abs(shrinkCor);}
+						if (pValue < minPValueInResponseWithQuery) {minPValueInResponseWithQuery = pValue;}						
+					}					
 				}
-
+				
                 sizeCanvas();
-                document.getElementById("coefficientSlider").max=maxCorrInResponse;
+                document.getElementById("coefficientSlider").max=maxCorrInResponseWithQuery;
                 //$(window).resize();
 				
 				var cnv4=document.getElementById('canvas1');
@@ -489,10 +523,10 @@
 				for(var i = 0; i < outputGenesetNames.length; ++i){
 					if (inNetwork.hasOwnProperty(outputGenesetNames[i])) {
                     	var newNode;
-						if((form2geneset.toUpperCase()==outputGenesetNames[i].toUpperCase())| ($("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0)) ) {
+						if((explore && form2geneset.toUpperCase()==outputGenesetNames[i].toUpperCase())| ((!explore) && $("#upgenesets").val() && (upGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >= 0)) ) {
                         	// Member of the up-regulated geneset
 							newNode = {"id": outputGenesetNames[i], "color" : "rgb(200,200,200)", "shape" : "sphere"};
-						} else if($("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
+						} else if((!explore) && $("#downgenesets").val() && (downGenesetNames.indexOf(outputGenesetNames[i].toUpperCase()) >=0) ) {
                         	// Member of the down-regulated geneset
 							newNode = {"id": outputGenesetNames[i], "color" : "rgb(55,55,55)", "shape" : "sphere"};
 						}
@@ -1199,9 +1233,9 @@
 		
 		function coefficientSliderChange (e) {
 			$("#coefficientText").val($("#coefficientSlider").val());
-			if ($("#coefficientSlider").val() > maxCorrInResponse) {
-				alert("None of the edges in the network has absolute correlation coefficient > " + $("#coefficientSlider").val() + ". Notwork has not been changed." ) ;
-				$("#coefficientSlider").val(maxCorrInResponse);
+			if ($("#coefficientSlider").val() > maxCorrInResponseWithQuery) {
+				alert("None of the edges connected to the query gene set(s) in the network has absolute correlation coefficient > " + $("#coefficientSlider").val() + ". Notwork has not been changed." ) ;
+				$("#coefficientSlider").val(maxCorrInResponseWithQuery);
 				$("#coefficientText").val($("#coefficientSlider").val());
 				return;
 			}
@@ -1217,8 +1251,8 @@
 		
 		function pvalueSliderChange (e) {
 			$("#pvalueText").val($("#pvalueSlider").val());
-			if ($("#pvalueSlider").val() < minPValueInResponse) {
-				alert("None of the edges in the network has correlation p value < " + $("#pvalueSlider").val()) ;
+			if ($("#pvalueSlider").val() < minPValueInResponseWithQuery) {
+				alert("None of the edges connected to the query gene set(s) in the network has correlation p value < " + $("#pvalueSlider").val()) ;
 			}
 			$("#inputpValue").val($("#pvalueSlider").val());				
 			//javascript:send();
